@@ -1,15 +1,10 @@
 import 'dart:io';
-
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
-import 'package:flutter_highlight/themes/codepen-embed.dart';
-import 'package:flutter_highlight/themes/github-gist.dart';
 import 'package:flutter_highlight/themes/github.dart';
-import 'package:flutter_highlight/themes/sunburst.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:rxdart/rxdart.dart';
 
 void main() {
   runApp(const MyApp());
@@ -127,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _loadFileContent() async {
     try {
-      final file = File("/assets/temp.cpp");
+      final file = File("https://code-sprout.s3.us-east-1.amazonaws.com/Queue_Q1.cpp");
       final content = await file.readAsString(); // Read the file as a string
       setState(()=>code=content);
     } catch (e) {
