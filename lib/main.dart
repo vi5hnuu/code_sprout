@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:code_sprout/extensions/string-etension.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
@@ -122,11 +123,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _loadFileContent() async {
     try {
-      final file = File("https://code-sprout.s3.us-east-1.amazonaws.com/Queue_Q1.cpp");
-      final content = await file.readAsString(); // Read the file as a string
-      setState(()=>code=content);
+      final url = "https://code-sprout.s3.us-east-1.amazonaws.com/Queue_Q1.cpp";
+      final response = await Dio().get(url);
+      if (response.statusCode == 200) {
+        setState(() => code = response.data); // Set the file content
+      } else {
+        throw Exception('Failed to load file. Status code: ${response.statusCode}');
+      }
     } catch (e) {
-
+      print("Error: $e");
+      throw e;
     }
   }
 
