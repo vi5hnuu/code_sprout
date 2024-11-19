@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
@@ -6,86 +8,8 @@ import 'package:flutter_highlight/themes/codepen-embed.dart';
 import 'package:flutter_highlight/themes/github-gist.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_highlight/themes/sunburst.dart';
-
-const dummyCode = '''
- // /**
-//  * Definition for a binary tree node.
-//  * struct TreeNode {
-//  *     int val;
-//  *     TreeNode *left;
-//  *     TreeNode *right;
-//  *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
-//  *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-//  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
-//  * };
-//  */
-// class Solution {
-//     int heightTree(TreeNode *root){
-//         if(!root){
-//             return 0;
-//         }
-//         if(!root->left && !root->right){
-//             return 1;
-//         }
-//         return 1+max(heightTree(root->left),heightTree(root->right));
-//     }
-//     int dls(TreeNode *root,int h){
-//         if(!root){
-//             return 0;
-//         }
-//         if(h==1){
-//             return root->val;
-//         }
-//         return dls(root->left,h-1)+dls(root->right,h-1);
-//     }
-// public:
-//     int deepestLeavesSum(TreeNode* root) {
-//         int h=heightTree(root);
-//         return dls(root,h);
-//     }
-// };
-///////////////
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class Solution {
-public:
-    int deepestLeavesSum(TreeNode* root) {
-        queue<TreeNode*> nodes;
-        nodes.push(root);
-
-        while(!nodes.empty()){
-            int sz=nodes.size();
-            int levelSum=0;
-            bool lastLevel=true;
-            while(sz>0){
-                auto node=nodes.front();
-                levelSum+=node->val;
-                nodes.pop();
-                if(node->left){
-                    nodes.push(node->left);
-                    lastLevel=false;
-                }
-                if(node->right){
-                    nodes.push(node->right);
-                    lastLevel=false;
-                }
-                sz--;
-            }
-            if(lastLevel) return levelSum;
-        }
-        return -1;
-    }
-};
-''';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:rxdart/rxdart.dart';
 
 void main() {
   runApp(const MyApp());
@@ -143,6 +67,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var activeHighlightTheme=githubTheme;
+  String? code;
+
+  @override
+  void initState() {
+    _loadFileContent();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,15 +91,15 @@ class _MyHomePageState extends State<MyHomePage> {
           fit: StackFit.expand,
           children: [
             SingleChildScrollView(
-              child: HighlightView(
-                dummyCode,
+              child: code!=null ? HighlightView(
+                code!,
                 language: 'cpp',
                 theme: activeHighlightTheme,
                 padding: const EdgeInsets.all(24),
                 textStyle: const TextStyle(
                     fontFamily:
                         'SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
-              ),
+              ):SpinKitCircle(color: theme.primaryColor),
             ),
             Align(
               alignment: Alignment(0.90, -0.95),
@@ -192,6 +123,16 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Future<void> _loadFileContent() async {
+    try {
+      final file = File("/assets/temp.cpp");
+      final content = await file.readAsString(); // Read the file as a string
+      setState(()=>code=content);
+    } catch (e) {
+
+    }
   }
 
   void _showThemeMenu() {
