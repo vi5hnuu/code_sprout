@@ -1,12 +1,14 @@
 import 'package:code_sprout/constants/httpStates.dart';
-import 'package:code_sprout/state/vratkatha/ProblemArchive_bloc.dart';
+import 'package:code_sprout/extensions/string-etension.dart';
+import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/RetryAgain.dart';
-import 'package:code_sprout/widgets/RoundedListTile.dart';
+import 'package:code_sprout/widgets/ProblemListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 
 class ProblemsInfoScreen extends StatefulWidget {
   final String title;
@@ -35,61 +37,75 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
         appBar: AppBar(
           title: Text(
             widget.title,
-            style: const TextStyle(color: Colors.white, fontFamily: "Kalam", fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                color: Colors.white,
+                fontFamily: "Kalam",
+                fontSize: 24,
+                letterSpacing: 1.1,
+                fontWeight: FontWeight.bold),
           ),
           backgroundColor: Theme.of(context).primaryColor,
           iconTheme: const IconThemeData(color: Colors.white),
         ),
-        body:BlocBuilder<ProblemArchiveBloc, ProblemArchiveState>(
-    buildWhen: (previous, current) => previous != current,
-    builder: (context, state) {
-      final pageItems=state.problemsInfo[pageNo]?.entries;
-      return Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if(pageItems!=null) Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: pageItems.length,
-              itemBuilder: (context, index) {
-                final problem = pageItems.elementAt(index);
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5),
-                  child: RoundedListTile(
-                      itemNo: index + 1,
-                      onTap: () => GoRouter.of(context).pushNamed('problems detail',pathParameters: {'problemId':problem.value.id}),
-                      text: '${problem.value.title}'),
-                );
-              },
-            ),
-          ),
-          Container(
-            decoration: const BoxDecoration(color: Colors.white),
-            child: (state.isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE))
-                ? Padding(padding: const EdgeInsets.symmetric(vertical: 20),child: SpinKitThreeBounce(color: Theme.of(context).primaryColor, size: 24))
-                : ((state.isError(forr: HttpStates.PROBLEMS_INFO_PAGE))
-                ? RetryAgain(
-                onRetry: loadCurrentPage,
-                error: state
-                    .getError(
-                    forr: HttpStates.PROBLEMS_INFO_PAGE)!
-                    .message)
-                : null),
-          )
-        ],
-      );
-    },
-    ));
-
+        body: BlocBuilder<ProblemArchiveBloc, ProblemArchiveState>(
+          buildWhen: (previous, current) => previous != current,
+          builder: (context, state) {
+            final allPageProblems=state.problemsInfo.entries.map((entry)=>entry.value.entries).expand((p) => p).toList();
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (state.problemsInfo.isNotEmpty)
+                  Expanded(
+                    child: ListView.builder(
+                      controller: _scrollController,
+                      itemCount: state.getProblemCount(),
+                      itemBuilder: (context, index) {
+                        int indexPage=(index%ProblemArchiveState.pageSize)+1;
+                        final problem = allPageProblems[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 5),
+                          child: ProblemListTile(
+                            problem: problem.value,
+                              onTap: () => GoRouter.of(context).pushNamed(
+                                      'problems detail',
+                                      pathParameters: {
+                                        'problemId': problem.value.id
+                                      })),
+                        );
+                      },
+                    ),
+                  ),
+                Container(
+                  decoration: const BoxDecoration(color: Colors.white),
+                  child: (state.isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE))
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: SpinKitThreeBounce(
+                              color: Theme.of(context).primaryColor, size: 24))
+                      : ((state.isError(forr: HttpStates.PROBLEMS_INFO_PAGE))
+                          ? RetryAgain(
+                              onRetry: loadCurrentPage,
+                              error: state
+                                  .getError(
+                                      forr: HttpStates.PROBLEMS_INFO_PAGE)!
+                                  .message)
+                          : null),
+                )
+              ],
+            );
+          },
+        ));
   }
 
-  loadCurrentPage(){
+  loadCurrentPage() {
     _loadPage(pageNo: pageNo);
   }
 
   void _loadPage({required int pageNo}) {
-    BlocProvider.of<ProblemArchiveBloc>(context).add(FetchProblemInfoPage(pageNo: pageNo, cancelToken: cancelToken));
+    BlocProvider.of<ProblemArchiveBloc>(context)
+        .add(FetchProblemInfoPage(pageNo: pageNo, cancelToken: cancelToken));
   }
 
   void _loadNextPage() {
@@ -99,8 +115,9 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
     double scrollPercentage = currentScrollPosition / maxScrollExtent;
     // Check if scroll percentage is greater than or equal to 80%
     if (scrollPercentage <= 0.8) return;
-    final bloc=BlocProvider.of<ProblemArchiveBloc>(context);
-    if(bloc.state.canLoadNextPage(pageNo:pageNo)) setState(() => _loadPage(pageNo: ++pageNo));
+    final bloc = BlocProvider.of<ProblemArchiveBloc>(context);
+    if (bloc.state.canLoadNextPage(pageNo: pageNo+1))
+      setState(() => _loadPage(pageNo: ++pageNo));
   }
 
   @override

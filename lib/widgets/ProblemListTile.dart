@@ -1,15 +1,38 @@
+import 'package:code_sprout/models/ProblemArchive.dart';
 import 'package:flutter/material.dart';
 
-class RoundedListTile extends StatelessWidget {
-  final int itemNo;
-  final String text;
-  final String? imageUrl;
+class ProblemListTile extends StatelessWidget {
   final VoidCallback? onTap;
+  final ProblemArchive problem;
 
-  const RoundedListTile({super.key, required this.itemNo,this.imageUrl, required this.text, this.onTap});
+  const ProblemListTile({super.key, required this.problem, this.onTap});
+  
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    final theme=Theme.of(context);
+    
+    return ExpansionTile(
+      title: Text(
+        problem.title,
+        style: const TextStyle(color: Colors.white)),
+      textColor: Colors.white,
+      iconColor: Colors.white,
+      backgroundColor: theme.primaryColor,
+      collapsedBackgroundColor: theme.primaryColor.withOpacity(0.9),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+      collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+      trailing: IconButton(
+          onPressed: onTap,
+          icon: Icon(Icons.read_more, color: Colors.white)),
+      children: [Text(problem.description ?? "")],
+      controlAffinity: ListTileControlAffinity.leading,
+      leading: Icon(Icons.numbers,color: Colors.white,),
+    );
+  }
+}
+
+/*
+ListTile(
       leading: CircleAvatar(
         radius: 24,
         backgroundColor: Theme.of(context).primaryColor,
@@ -26,6 +49,5 @@ class RoundedListTile extends StatelessWidget {
       title: Text(text,softWrap: false,maxLines: 1,overflow: TextOverflow.ellipsis,),
       contentPadding: const EdgeInsets.symmetric(horizontal: 5),
       onTap: onTap,
-    );
-  }
-}
+    )
+* */

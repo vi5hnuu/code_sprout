@@ -4,12 +4,12 @@ part of 'ProblemArchive_bloc.dart';
 class ProblemArchiveState extends Equatable with WithHttpState {
   final Map<int,Map<String,ProblemArchive>> problemsInfo; //page,{id->problem}
   static const pageSize=20;
-  final int totalPages;
+  final int? totalPages;
 
   ProblemArchiveState._({
     Map<String,HttpState>? httpStates,
     this.problemsInfo=const {},
-    this.totalPages=0,
+    this.totalPages,
   }){
     this.httpStates.addAll(httpStates ?? {});
   }
@@ -34,6 +34,11 @@ class ProblemArchiveState extends Equatable with WithHttpState {
 
   MapEntry<String, ProblemArchive> getEntry(ProblemArchive problem) => MapEntry(problem.id, problem);
 
+  int getProblemCount() {
+    if(problemsInfo.isEmpty) return 0;
+    return (problemsInfo.entries.length-1)*pageSize+problemsInfo.entries.last.value.length;
+  }
+
   hasProblemsInfoPage({required int pageNo}){
     if(pageNo<=0) throw Exception("pageNo should be greater than 0");
     return problemsInfo.containsKey(pageNo);
@@ -41,7 +46,9 @@ class ProblemArchiveState extends Equatable with WithHttpState {
 
   bool canLoadNextPage({required int pageNo}) {
     assert(pageNo>=1);
-    if(isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE) || problemsInfo.containsKey(pageNo)) return false;
+
+    if(pageNo>1 && totalPages==null) throw Exception("total pages not initialized");
+    if(isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE) || problemsInfo.containsKey(pageNo) || (pageNo>1 && pageNo>totalPages!) ) return false;
     return true;
   }
 
@@ -59,9 +66,9 @@ class ProblemArchiveState extends Equatable with WithHttpState {
     return problemsInfo[pageNo]?[problemId];
   }
 
-
   @override
   List<Object?> get props => [httpStates, problemsInfo, totalPages];
+
 
 
 }

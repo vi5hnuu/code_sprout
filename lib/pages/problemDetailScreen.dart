@@ -1,7 +1,7 @@
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
 import 'package:code_sprout/singletons/DioSingleton.dart';
-import 'package:code_sprout/state/vratkatha/ProblemArchive_bloc.dart';
+import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,22 +12,23 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ProblemDetailscreen extends StatefulWidget {
   final String problemId;
-  final String title;
 
-  const ProblemDetailscreen({super.key, required this.title,required this.problemId});
+  const ProblemDetailscreen({super.key,required this.problemId});
 
   @override
   State<ProblemDetailscreen> createState() => _ProblemDetailscreenState();
 }
 
 class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
-  var activeHighlightTheme=githubTheme;
+  var activeHighlightTheme = githubTheme;
   late final ProblemArchive problemDetail;
   String? code;
 
   @override
   void initState() {
-    problemDetail=BlocProvider.of<ProblemArchiveBloc>(context).state.getProblemInfoById(problemId: widget.problemId)!;
+    problemDetail = BlocProvider.of<ProblemArchiveBloc>(context)
+        .state
+        .getProblemInfoById(problemId: widget.problemId)!;
     _loadFileContent();
     super.initState();
   }
@@ -38,25 +39,26 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: theme.primaryColor,
+        title: Text(problemDetail.title),
+        foregroundColor: Colors.white,
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Stack(
           fit: StackFit.expand,
           children: [
             SingleChildScrollView(
-              child: code!=null ? HighlightView(
-                code!,
-                language: 'cpp',
-                theme: activeHighlightTheme,
-                padding: const EdgeInsets.all(24),
-                textStyle: const TextStyle(
-                    fontFamily:
-                    'SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
-              ):SpinKitChasingDots(color: theme.primaryColor),
+              child: code != null
+                  ? HighlightView(
+                      code!,
+                      language: 'cpp',
+                      theme: activeHighlightTheme,
+                      padding: const EdgeInsets.all(24),
+                      textStyle: const TextStyle(
+                          fontFamily:
+                              'SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
+                    )
+                  : Padding(padding: const EdgeInsets.all(24.0),child: SpinKitPulse(color: theme.primaryColor),),
             ),
             Align(
               alignment: Alignment(0.90, -0.95),
@@ -65,20 +67,13 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
                 icon: const Icon(Icons.format_paint),
                 style: ButtonStyle(
                     backgroundColor:
-                    WidgetStatePropertyAll(theme.primaryColorLight),
+                        WidgetStatePropertyAll(theme.primaryColorLight),
                     elevation: WidgetStatePropertyAll(5)),
               ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ) // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -88,7 +83,8 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
       if (response.statusCode == 200) {
         setState(() => code = response.data); // Set the file content
       } else {
-        throw Exception('Failed to load file. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to load file. Status code: ${response.statusCode}');
       }
     } catch (e) {
       print("Error: $e");
@@ -97,17 +93,19 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
   }
 
   void _showThemeMenu() {
-    final mediaQuery=MediaQuery.of(context);
-    final theme=Theme.of(context);
+    final mediaQuery = MediaQuery.of(context);
+    final theme = Theme.of(context);
 
     showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(1,0.1,0.5,0.5),
+      position: RelativeRect.fromLTRB(1, 0.1, 0.5, 0.5),
       menuPadding: EdgeInsets.all(12),
       elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12))),
       surfaceTintColor: theme.primaryColorLight,
-      constraints: BoxConstraints.tight(Size(mediaQuery.size.width*0.4, mediaQuery.size.height*0.6)),
+      constraints: BoxConstraints.tight(
+          Size(mediaQuery.size.width * 0.4, mediaQuery.size.height * 0.6)),
       items: themeMap.keys.map((String themeName) {
         return PopupMenuItem<String>(
           value: themeName,
@@ -116,8 +114,7 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
       }).toList(),
     ).then((selectedTheme) {
       if (selectedTheme == null) return;
-      setState(() =>activeHighlightTheme = themeMap[selectedTheme]!);
+      setState(() => activeHighlightTheme = themeMap[selectedTheme]!);
     });
   }
 }
-

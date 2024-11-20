@@ -1,9 +1,10 @@
 
 import 'package:code_sprout/pages/ProblemsInfoScreen.dart';
+import 'package:code_sprout/pages/SplashScreen.dart';
 import 'package:code_sprout/pages/problemDetailScreen.dart';
 import 'package:code_sprout/services/problemArchive/ProblemArchiveRepository.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
-import 'package:code_sprout/state/vratkatha/ProblemArchive_bloc.dart';
+import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,10 +30,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   static final _whiteListedRoutes = [];
-final router=GoRouter(
+  final router=GoRouter(
       debugLogDiagnostics: true,
-      initialLocation: '/problem',
+      initialLocation: '/splash',
       routes: [
+        GoRoute(
+        name: 'splash',
+        path: '/splash',
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const SplashScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+          ),
+        ),
         GoRoute(
           name: 'problem',
           path: '/problem',
@@ -46,13 +56,13 @@ final router=GoRouter(
             GoRoute(name: 'problems info',path: 'info',
               pageBuilder: (context, state) => CustomTransitionPage<void>(
                 key: state.pageKey,
-                child: const ProblemsInfoScreen(title: "Problems"),
+                child: const ProblemsInfoScreen(title: "Problems👩‍💻"),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
               ), ),
             GoRoute(name: 'problems detail',path: ':problemId/detail',
               pageBuilder: (context, state) => CustomTransitionPage<void>(
                 key: state.pageKey,
-                child: ProblemDetailscreen(title: "Problems",problemId:state.pathParameters['problemId']!),
+                child: ProblemDetailscreen(problemId:state.pathParameters['problemId']!),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
               ), )
           ]
@@ -74,7 +84,7 @@ final router=GoRouter(
       child:MaterialApp.router(
         key: parentNavKey,
         scaffoldMessengerKey: NotificationService.messengerKey,
-        title: 'Spirtual Shakti',
+        title: 'Code Sprout',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: const ColorScheme.highContrastLight(primary: Color.fromRGBO(165, 62, 72, 1)),
