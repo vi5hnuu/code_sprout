@@ -6,4 +6,8 @@ enum ProblemCategory {
     final String value;
 
     const ProblemCategory({required this.value});
+
+    static ProblemCategory? fromValue(String value){
+        return ProblemCategory.values.firstWhere((e) => e.value == value);
+    }
 }

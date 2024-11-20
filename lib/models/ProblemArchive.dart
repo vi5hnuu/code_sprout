@@ -16,12 +16,12 @@ class ProblemArchive {
       required this.category,
       required this.filePath});
 
-  static fromJson(Map<String, dynamic> json) {
+  static ProblemArchive fromJson(Map<String, dynamic> json) {
     return ProblemArchive(
         id: json['id'] as String,
         title: json['title'] as String,
-        language: json['language'] as ProblemLanguage,
-        category: json['category'] as ProblemCategory,
+        language: ProblemLanguage.fromValue(json['language'] as String) ?? ProblemLanguage.CPP,
+        category: ProblemCategory.fromValue(json['category'] as String) ?? ProblemCategory.EASY,
         filePath: json['filePath'] as String);
   }
 }

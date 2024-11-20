@@ -39,6 +39,13 @@ class ProblemArchiveState extends Equatable with WithHttpState {
     return problemsInfo.containsKey(pageNo);
   }
 
+  bool canLoadNextPage({required int pageNo}) {
+    assert(pageNo>=1);
+    if(isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE) || problemsInfo.containsKey(pageNo)) return false;
+    return true;
+  }
+
+
   ProblemArchive? getProblemInfoById({required String problemId}){
     for(final problemsPage in problemsInfo.entries){
       if(!problemsPage.value.containsKey(problemId)) continue;
@@ -55,4 +62,6 @@ class ProblemArchiveState extends Equatable with WithHttpState {
 
   @override
   List<Object?> get props => [httpStates, problemsInfo, totalPages];
+
+
 }

@@ -18,6 +18,7 @@ class DioSingleton {
               return handler.next(response);
             },
             onError: (DioException e, handler) {
+              print(e.error);
               LoggerSingleton().logger.i('ERROR [${e.response?.statusCode}] => PATH: ${e.requestOptions.path}');
               return handler.next(e);
             }));

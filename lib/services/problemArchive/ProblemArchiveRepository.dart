@@ -16,6 +16,7 @@ class ProblemArchiveRepository implements ProblemArchiveService {
   @override
   Future<ApiResponse<Pageable<ProblemArchive>>> getProblemsInfoPage({required pageNo, required pageSize, CancelToken? cancelToken}) async {
     final res = await _problemArchiveApi.getProblemsInfoPage(pageNo: pageNo,pageSize:pageSize, cancelToken: cancelToken);
-    return ApiResponse<Pageable<ProblemArchive>>(success: res['success'], data: ProblemArchive.fromJson(res['data']));
+    final pageableRaw=res['data'];//pageable
+    return ApiResponse<Pageable<ProblemArchive>>(success: res['success'], data:Pageable(data: (pageableRaw['data'] as List).map((problem)=>ProblemArchive.fromJson(problem)).toList(), pageNo: pageableRaw['pageNo'] as int, totalPages: pageableRaw['totalPages'] as int));
   }
 }
