@@ -1,53 +1,52 @@
+import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
+import 'package:code_sprout/models/ProblemPlatform.dart';
+import 'package:code_sprout/models/enums/ProblemCategory.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProblemListTile extends StatelessWidget {
   final VoidCallback? onTap;
+  final Function(String url)? onPlatformTap;
   final ProblemArchive problem;
 
-  const ProblemListTile({super.key, required this.problem, this.onTap});
+  const ProblemListTile({super.key, required this.problem, this.onTap,this.onPlatformTap});
   
   @override
   Widget build(BuildContext context) {
-    final theme=Theme.of(context);
-    
     return ExpansionTile(
-      title: Text(
-        problem.title,
-        style: const TextStyle(color: Colors.white)),
-      textColor: Colors.white,
-      iconColor: Colors.white,
-      backgroundColor: theme.primaryColor,
-      collapsedBackgroundColor: theme.primaryColor.withOpacity(0.9),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-      collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+      title: Wrap(spacing: 16,children: [Text(problem.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18)),Text(problem.category.value.capitalize(),style: TextStyle(letterSpacing: 1.1,color: problem.category==ProblemCategory.EASY ? Colors.green : (problem.category==ProblemCategory.MEDIUM ? Colors.orangeAccent : Colors.red),fontWeight: FontWeight.bold),)],),
+      backgroundColor: Colors.green.withOpacity(0.1),
+      collapsedBackgroundColor: Colors.green.withOpacity(0.05),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),side: const BorderSide(color: Colors.black)),
+      collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0),side: const BorderSide(color: Colors.black)),
+      subtitle: Wrap(
+        children: problem.platforms
+            .map((platform) => IconButton(
+            onPressed: onPlatformTap!=null ? ()=>onPlatformTap!(platform.redirectUrl):null,
+            icon: SvgPicture.asset(
+                  'assets/platforms/${platform.title.toLowerCase()}.svg',
+                  width: 24,fit: BoxFit.fitHeight,
+                )))
+            .toList()..add(IconButton(onPressed:() => _sharePlatformLinks(problem.platforms) , icon: const Icon(Icons.share))),
+      ),
       trailing: IconButton(
           onPressed: onTap,
-          icon: Icon(Icons.read_more, color: Colors.white)),
-      children: [Text(problem.description ?? "")],
+          icon: const Icon(Icons.read_more,color: Colors.black)),
       controlAffinity: ListTileControlAffinity.leading,
-      leading: Icon(Icons.numbers,color: Colors.white,),
+      leading: const Icon(Icons.numbers,color: Colors.black),
+      children: [Text(problem.description ?? "")],
     );
   }
-}
 
-/*
-ListTile(
-      leading: CircleAvatar(
-        radius: 24,
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Text('$itemNo', style: const TextStyle(color: Colors.white)),
-      ),
-      trailing: imageUrl!=null ? ClipOval(child: CircleAvatar(radius: 24,child: Image.network(fit: BoxFit.fitHeight,imageUrl!,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return const CircularProgressIndicator();
-          },
-          errorBuilder: (context, error, stackTrace) => const Icon(Icons.image_not_supported_outlined)),)) : null,
-      key: key,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(64), side: BorderSide(color: Theme.of(context).primaryColor)),
-      title: Text(text,softWrap: false,maxLines: 1,overflow: TextOverflow.ellipsis,),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 5),
-      onTap: onTap,
-    )
-* */
+  void _sharePlatformLinks(List<ProblemPlatform> platforms) {
+    // Format the array into a string
+    String formattedString = platforms.map((platform) {
+      return '${platform.title} : ${platform.redirectUrl}';
+    }).join('\n\n'); // Double newlines for separation
+
+    // Share the formatted string
+    Share.share(formattedString);
+  }
+}

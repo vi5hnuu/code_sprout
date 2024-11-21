@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 
@@ -14,7 +15,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Timer? timer;
-  String? error;
 
   @override
   void initState() {
@@ -24,6 +24,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme=Theme.of(context);
+
     return Scaffold(
         body: Column(
           mainAxisSize: MainAxisSize.max,
@@ -42,11 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   style: TextStyle(fontFamily: "PermanentMarker", fontSize: 32, color: Theme.of(context).primaryColor),
                 ),
                 const SizedBox(height: 15),
-                Text(
-                  error ?? "Initializing...",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: "PermanentMarker", fontSize: 18, color: Theme.of(context).primaryColor.withOpacity(0.5)),
-                )
+                SpinKitPulse(color: theme.primaryColor)
               ],
             ),
           ],

@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             GoRoute(name: 'problems info',path: 'info',
               pageBuilder: (context, state) => CustomTransitionPage<void>(
                 key: state.pageKey,
-                child: const ProblemsInfoScreen(title: "Problems👩‍💻"),
+                child: const ProblemsInfoScreen(title: "🥗 Sprouts 🥗"),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
               ), ),
             GoRoute(name: 'problems detail',path: ':problemId/detail',

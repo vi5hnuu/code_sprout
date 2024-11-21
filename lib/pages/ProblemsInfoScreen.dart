@@ -1,5 +1,6 @@
 import 'package:code_sprout/constants/httpStates.dart';
 import 'package:code_sprout/extensions/string-etension.dart';
+import 'package:code_sprout/singletons/NotificationService.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/RetryAgain.dart';
 import 'package:code_sprout/widgets/ProblemListTile.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProblemsInfoScreen extends StatefulWidget {
   final String title;
@@ -35,12 +37,13 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             widget.title,
             style: const TextStyle(
                 color: Colors.white,
                 fontFamily: "Kalam",
-                fontSize: 24,
+                fontSize: 32,
                 letterSpacing: 1.1,
                 fontWeight: FontWeight.bold),
           ),
@@ -72,7 +75,8 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                                       'problems detail',
                                       pathParameters: {
                                         'problemId': problem.value.id
-                                      })),
+                                      }),
+                          onPlatformTap: _openUrl,),
                         );
                       },
                     ),
@@ -97,6 +101,15 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
             );
           },
         ));
+  }
+
+  Future<void> _openUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+    } else {
+      NotificationService.showSnackbar(text: "Failed to open page");
+    }
   }
 
   loadCurrentPage() {
