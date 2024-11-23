@@ -1,3 +1,3 @@
 class Constants{
-  static const String baseUrl="http://192.168.141.148:9093/api/v1";
+  static const String baseUrl="http://3.110.167.42:9093/api/v1";
 }
