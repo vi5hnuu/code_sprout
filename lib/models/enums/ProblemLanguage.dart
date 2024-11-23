@@ -1,5 +1,6 @@
 enum ProblemLanguage {
-    CPP(value:"cpp");
+    CPP(value:"CPP"),
+    SQL(value:"SQL");
 
     final String value;
 

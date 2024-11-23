@@ -1,7 +1,7 @@
 enum ProblemCategory {
-    EASY(value: "easy"),
-    MEDIUM(value: "medium"),
-    HARD(value: "hard");
+    EASY(value: "EASY"),
+    MEDIUM(value: "MEDIUM"),
+    HARD(value: "HARD");
 
     final String value;
 

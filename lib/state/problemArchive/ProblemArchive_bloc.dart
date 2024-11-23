@@ -24,9 +24,9 @@ class ProblemArchiveBloc extends Bloc<ProblemArchiveEvent, ProblemArchiveState> 
         final problemsInfo=state.problemsInfo.clone(withh: MapEntry(event.pageNo, LinkedHashMap.fromEntries(problemsInfoPage.data!.data.map((problem)=>state.getEntry(problem)))));
         emit(state.copyWith(problemsInfo: problemsInfo,totalPages: problemsInfoPage.data!.totalPages,httpStates:state.httpStates.clone()..remove(HttpStates.PROBLEMS_INFO_PAGE)));
       }  on DioException catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(HttpStates.PROBLEMS_INFO_PAGE, HttpState.error(error: ErrorModel(message: e.message ?? "something went wrong")))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(HttpStates.PROBLEMS_INFO_PAGE, HttpState.error(error: ErrorModel(message: "Failed to load problems,Please try again")))));
       } catch (e) {
-        emit(state.copyWith(httpStates: state.httpStates.clone()..put(HttpStates.PROBLEMS_INFO_PAGE, HttpState.error(error: ErrorModel(message: e.toString())))));
+        emit(state.copyWith(httpStates: state.httpStates.clone()..put(HttpStates.PROBLEMS_INFO_PAGE, HttpState.error(error: ErrorModel(message: "Failed to load problems,Please try again")))));
       }
     });
   }

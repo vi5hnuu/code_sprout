@@ -61,6 +61,7 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                 if (state.problemsInfo.isNotEmpty)
                   Expanded(
                     child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
                       controller: _scrollController,
                       itemCount: state.getProblemCount(),
                       itemBuilder: (context, index) {
@@ -68,7 +69,7 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                         final problem = allPageProblems[index];
                         return Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 5),
+                              horizontal: 8.0, vertical: 2),
                           child: ProblemListTile(
                             problem: problem.value,
                               onTap: () => GoRouter.of(context).pushNamed(
@@ -82,7 +83,6 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                     ),
                   ),
                 Container(
-                  decoration: const BoxDecoration(color: Colors.white),
                   child: (state.isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE))
                       ? Padding(
                           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -92,8 +92,7 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                           ? RetryAgain(
                               onRetry: loadCurrentPage,
                               error: state
-                                  .getError(
-                                      forr: HttpStates.PROBLEMS_INFO_PAGE)!
+                                  .getError(forr: HttpStates.PROBLEMS_INFO_PAGE)!
                                   .message)
                           : null),
                 )
