@@ -48,16 +48,21 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
           fit: StackFit.expand,
           children: [
             SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: code != null
-                  ? HighlightView(
-                      code!,
-                      language: 'cpp',
-                      theme: activeHighlightTheme,
-                      padding: const EdgeInsets.all(24),
-                      textStyle: const TextStyle(
-                          fontFamily:
-                              'SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace'),
-                    )
+                  ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                    child: HighlightView(
+                        code!,
+                        language: problemDetail.language.value.toLowerCase(),
+                        theme: activeHighlightTheme,
+                        padding: const EdgeInsets.all(24),
+                        textStyle: const TextStyle(
+                          overflow: TextOverflow.visible,
+                            fontFamily:
+                                'monospace'),
+                      ),
+                  )
                   : Padding(padding: const EdgeInsets.all(24.0),child: SpinKitPulse(color: theme.primaryColor),),
             ),
             Align(
