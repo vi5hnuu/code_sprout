@@ -1,10 +1,8 @@
 import 'package:code_sprout/constants/httpStates.dart';
-import 'package:code_sprout/extensions/string-etension.dart';
-import 'package:code_sprout/singletons/LoggerSingleton.dart';
+import 'package:code_sprout/singletons/AdsSingleton.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/BannerAdd.dart';
-import 'package:code_sprout/widgets/IntersitialAdd.dart';
 import 'package:code_sprout/widgets/RetryAgain.dart';
 import 'package:code_sprout/widgets/ProblemListTile.dart';
 import 'package:dio/dio.dart';
@@ -13,8 +11,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProblemsInfoScreen extends StatefulWidget {
@@ -68,18 +64,16 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                   controller: _scrollController,
                   itemCount: state.getProblemCount(),
                   itemBuilder: (context, index) {
-                    int indexPage=(index%ProblemArchiveState.pageSize)+1;
                     final problem = allPageProblems[index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8.0, vertical: 2),
                       child: ProblemListTile(
                         problem: problem.value,
-                        onTap: () => GoRouter.of(context).pushNamed(
-                            'problems detail',
-                            pathParameters: {
-                              'problemId': problem.value.id
-                            }),
+                        onTap: () {
+                            AdsSingleton().dispatch(LoadInterstitialAd());
+                            GoRouter.of(context).pushNamed('problems detail', pathParameters: {'problemId': problem.value.id});
+                          },
                         onPlatformTap: _openUrl,),
                     );
                   },
@@ -99,7 +93,6 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                       : null),
                 ),
                 const BannerAdd(),
-                const InterstitialAdd(),
               ],
             );
           },
