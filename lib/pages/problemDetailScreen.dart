@@ -2,6 +2,7 @@ import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
 import 'package:code_sprout/singletons/DioSingleton.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
+import 'package:code_sprout/widgets/BannerAdd.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,38 +45,44 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
         foregroundColor: Colors.white,
       ),
       body: Center(
-        child: Stack(
-          fit: StackFit.expand,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: code != null
-                  ? SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+            Expanded(child: Stack(
+              fit: StackFit.expand,
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: code != null
+                      ? SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
                     child: HighlightView(
-                        code!,
-                        language: problemDetail.language.value.toLowerCase(),
-                        theme: activeHighlightTheme,
-                        padding: const EdgeInsets.all(24),
-                        textStyle: const TextStyle(
+                      code!,
+                      language: problemDetail.language.value.toLowerCase(),
+                      theme: activeHighlightTheme,
+                      padding: const EdgeInsets.all(24),
+                      textStyle: const TextStyle(
                           overflow: TextOverflow.visible,
-                            fontFamily:
-                                'monospace'),
-                      ),
+                          fontFamily:
+                          'monospace'),
+                    ),
                   )
-                  : Padding(padding: const EdgeInsets.all(24.0),child: SpinKitPulse(color: theme.primaryColor),),
-            ),
-            Align(
-              alignment: Alignment(0.90, -0.95),
-              child: IconButton(
-                onPressed: _showThemeMenu,
-                icon: const Icon(Icons.format_paint),
-                style: ButtonStyle(
-                    backgroundColor:
+                      : Padding(padding: const EdgeInsets.all(24.0),child: SpinKitPulse(color: theme.primaryColor),),
+                ),
+                Align(
+                  alignment: Alignment(0.90, -0.95),
+                  child: IconButton(
+                    onPressed: _showThemeMenu,
+                    icon: const Icon(Icons.format_paint),
+                    style: ButtonStyle(
+                        backgroundColor:
                         WidgetStatePropertyAll(theme.primaryColorLight),
-                    elevation: WidgetStatePropertyAll(5)),
-              ),
-            ),
+                        elevation: WidgetStatePropertyAll(5)),
+                  ),
+                ),
+              ],
+            )),
+            const BannerAdd(),
           ],
         ),
       ) // This trailing comma makes auto-formatting nicer for build methods.

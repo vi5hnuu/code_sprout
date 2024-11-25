@@ -1,14 +1,19 @@
 import 'package:code_sprout/constants/httpStates.dart';
 import 'package:code_sprout/extensions/string-etension.dart';
+import 'package:code_sprout/singletons/LoggerSingleton.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
+import 'package:code_sprout/widgets/BannerAdd.dart';
+import 'package:code_sprout/widgets/IntersitialAdd.dart';
 import 'package:code_sprout/widgets/RetryAgain.dart';
 import 'package:code_sprout/widgets/ProblemListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -58,44 +63,43 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                if (state.problemsInfo.isNotEmpty)
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      controller: _scrollController,
-                      itemCount: state.getProblemCount(),
-                      itemBuilder: (context, index) {
-                        int indexPage=(index%ProblemArchiveState.pageSize)+1;
-                        final problem = allPageProblems[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8.0, vertical: 2),
-                          child: ProblemListTile(
-                            problem: problem.value,
-                              onTap: () => GoRouter.of(context).pushNamed(
-                                      'problems detail',
-                                      pathParameters: {
-                                        'problemId': problem.value.id
-                                      }),
-                          onPlatformTap: _openUrl,),
-                        );
-                      },
-                    ),
-                  ),
+                if (state.problemsInfo.isNotEmpty) Expanded(child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  controller: _scrollController,
+                  itemCount: state.getProblemCount(),
+                  itemBuilder: (context, index) {
+                    int indexPage=(index%ProblemArchiveState.pageSize)+1;
+                    final problem = allPageProblems[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 2),
+                      child: ProblemListTile(
+                        problem: problem.value,
+                        onTap: () => GoRouter.of(context).pushNamed(
+                            'problems detail',
+                            pathParameters: {
+                              'problemId': problem.value.id
+                            }),
+                        onPlatformTap: _openUrl,),
+                    );
+                  },
+                )),
                 Container(
                   child: (state.isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE))
                       ? Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: SpinKitThreeBounce(
-                              color: Theme.of(context).primaryColor, size: 24))
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: SpinKitThreeBounce(
+                          color: Theme.of(context).primaryColor, size: 24))
                       : ((state.isError(forr: HttpStates.PROBLEMS_INFO_PAGE))
-                          ? RetryAgain(
-                              onRetry: loadCurrentPage,
-                              error: state
-                                  .getError(forr: HttpStates.PROBLEMS_INFO_PAGE)!
-                                  .message)
-                          : null),
-                )
+                      ? RetryAgain(
+                      onRetry: loadCurrentPage,
+                      error: state
+                          .getError(forr: HttpStates.PROBLEMS_INFO_PAGE)!
+                          .message)
+                      : null),
+                ),
+                const BannerAdd(),
+                const InterstitialAdd(),
               ],
             );
           },

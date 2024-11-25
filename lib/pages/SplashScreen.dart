@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:code_sprout/singletons/LoggerSingleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -15,10 +18,21 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   Timer? timer;
+  var adsInitilized=false;
 
   @override
   void initState() {
-    timer=Timer(const Duration(seconds: 5),()=>goToHome());
+    MobileAds.instance.initialize().then((value) {
+      if(!mounted) return;
+      setState(()=>adsInitilized=true);
+      if(timer!.isActive) return;
+      LoggerSingleton().logger.i('Ads ${value.adapterStatuses.keys.join(',')} : ${value.adapterStatuses.values.join(',')}');
+      goToHome();
+    });
+    timer=Timer(const Duration(seconds: 5),(){
+      if(!mounted) return;
+      if(adsInitilized) goToHome();
+    });
     super.initState();
   }
 
