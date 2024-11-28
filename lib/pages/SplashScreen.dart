@@ -22,6 +22,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
+    MobileAds.instance.updateRequestConfiguration(
+      RequestConfiguration(
+        tagForChildDirectedTreatment: TagForChildDirectedTreatment.yes,
+      ),
+    );
+
     MobileAds.instance.initialize().then((value) {
       if(!mounted) return;
       setState(()=>adsInitilized=true);
