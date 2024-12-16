@@ -1,3 +1,3 @@
 class Constants{
-  static const String baseUrl="http://3.110.167.42:9093/api/v1";
+  static const String baseUrl="https://code-sprout-api-1.onrender.com/api/v1";
 }

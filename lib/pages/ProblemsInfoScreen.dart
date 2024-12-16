@@ -7,7 +7,6 @@ import 'package:code_sprout/widgets/RetryAgain.dart';
 import 'package:code_sprout/widgets/ProblemListTile.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
@@ -43,9 +42,9 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
             widget.title,
             style: const TextStyle(
                 color: Colors.white,
-                fontFamily: "Kalam",
+                fontFamily: "monospace",
                 fontSize: 32,
-                letterSpacing: 1.1,
+                letterSpacing: 2,
                 fontWeight: FontWeight.bold),
           ),
           backgroundColor: Theme.of(context).primaryColor,
