@@ -7,11 +7,13 @@ import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/BannerAdd.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProblemDetailscreen extends StatefulWidget {
   final ProblemLanguage language;
@@ -73,14 +75,39 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
                       : Padding(padding: const EdgeInsets.all(24.0),child: SpinKitPulse(color: theme.primaryColor),),
                 ),
                 Align(
-                  alignment: Alignment(0.90, -0.95),
-                  child: IconButton(
-                    onPressed: _showThemeMenu,
-                    icon: const Icon(Icons.format_paint),
-                    style: ButtonStyle(
-                        backgroundColor:
-                        WidgetStatePropertyAll(theme.primaryColorLight),
-                        elevation: WidgetStatePropertyAll(5)),
+                  alignment: const Alignment(0.98, -0.90),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Opacity(
+                      opacity: 0.7,
+                      child: Column(
+                        children: [
+                          if(code!=null) IconButton(
+                            onPressed: ()=>Clipboard.setData(ClipboardData(text: code!)),
+                            icon: const Icon(Icons.copy),
+                            style: ButtonStyle(
+                                backgroundColor:
+                                WidgetStatePropertyAll(theme.primaryColorLight),
+                                elevation: WidgetStatePropertyAll(5)),
+                          ),
+                          if(code!=null) IconButton(
+                            onPressed: ()=>Share.share(code!),
+                            icon: const Icon(Icons.share),
+                            style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(theme.primaryColorLight),
+                                elevation: WidgetStatePropertyAll(5)),
+                          ),
+                          IconButton(
+                            onPressed: _showThemeMenu,
+                            icon: const Icon(Icons.format_paint),
+                            style: ButtonStyle(
+                                backgroundColor:
+                                WidgetStatePropertyAll(theme.primaryColorLight),
+                                elevation: WidgetStatePropertyAll(5)),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],
