@@ -1,5 +1,7 @@
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
+import 'package:code_sprout/models/enums/ProblemLanguage.dart';
+import 'package:code_sprout/singletons/AdsSingleton.dart';
 import 'package:code_sprout/singletons/DioSingleton.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/BannerAdd.dart';
@@ -12,9 +14,10 @@ import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ProblemDetailscreen extends StatefulWidget {
+  final ProblemLanguage language;
   final String problemId;
 
-  const ProblemDetailscreen({super.key,required this.problemId});
+  const ProblemDetailscreen({super.key,required this.language,required this.problemId});
 
   @override
   State<ProblemDetailscreen> createState() => _ProblemDetailscreenState();
@@ -27,9 +30,9 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
 
   @override
   void initState() {
+    AdsSingleton().dispatch(LoadInterstitialAd());
     problemDetail = BlocProvider.of<ProblemArchiveBloc>(context)
-        .state
-        .getProblemInfoById(problemId: widget.problemId)!;
+        .state.getProblemInfoById(language:widget.language,problemId: widget.problemId)!;
     _loadFileContent();
     super.initState();
   }

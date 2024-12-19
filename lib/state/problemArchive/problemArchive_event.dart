@@ -8,5 +8,7 @@ abstract class ProblemArchiveEvent {
 
 class FetchProblemInfoPage extends ProblemArchiveEvent {
   final int pageNo;
-  const FetchProblemInfoPage({required this.pageNo,super.cancelToken});
+  final ProblemLanguage language;
+  final ProblemCategory? category;
+  const FetchProblemInfoPage({required this.pageNo,super.cancelToken, required this.language,this.category});
 }

@@ -15,13 +15,18 @@ class RetryAgain extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onRetry,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Icon(Icons.refresh,color: Colors.red,size: 55),
-          Text(error,style: const TextStyle(color: Colors.red,fontSize: 16))
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(Icons.refresh,color: Colors.redAccent,size: 35,),
+            const SizedBox(height: 12),
+            Text(error,style: const TextStyle(color: Colors.redAccent,fontFamily: 'monospace',fontSize: 16),softWrap: true)
+          ],
+        ),
       ),
     );
   }

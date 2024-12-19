@@ -16,6 +16,10 @@ mixin WithHttpState{
     return false;
   }
 
+  bool anyState({required final String forr}){
+    return anyLoading(forr: [forr]) || anyError(forr: [forr]);
+  }
+
   bool anyError({List<String> forr=const []}){
     if(forr.isEmpty) forr=httpStates.keys.toList();
     for(final key in forr){

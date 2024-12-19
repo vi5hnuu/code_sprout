@@ -1,7 +1,12 @@
 
+import 'package:code_sprout/extensions/string-etension.dart';
+import 'package:code_sprout/models/enums/ProblemCategory.dart';
+import 'package:code_sprout/models/enums/ProblemLanguage.dart';
+import 'package:code_sprout/pages/ProblemsCategoryScreen.dart';
 import 'package:code_sprout/pages/ProblemsInfoScreen.dart';
 import 'package:code_sprout/pages/SplashScreen.dart';
 import 'package:code_sprout/pages/problemDetailScreen.dart';
+import 'package:code_sprout/routes.dart';
 import 'package:code_sprout/services/problemArchive/ProblemArchiveRepository.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
@@ -32,11 +37,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   static final _whiteListedRoutes = [];
   final router=GoRouter(
       debugLogDiagnostics: true,
-      initialLocation: '/splash',
+      initialLocation: AppRoutes.splashRoute.path,
       routes: [
         GoRoute(
-        name: 'splash',
-        path: '/splash',
+        name: AppRoutes.splashRoute.name,
+        path: AppRoutes.splashRoute.path,
           pageBuilder: (context, state) => CustomTransitionPage<void>(
             key: state.pageKey,
             child: const SplashScreen(),
@@ -44,25 +49,37 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ),
         ),
         GoRoute(
-          name: 'problem',
-          path: '/problem',
+          name: AppRoutes.problems.name,
+          path: AppRoutes.problems.path,
           redirect: (context, state) {
-            if(state.fullPath=='/problem'){
-              return '/problem/info';
+            if(state.fullPath==AppRoutes.problems.path){
+              return AppRoutes.problems.path+'/'+AppRoutes.problemsCategory.path;
             }
             return null;
           },
           routes: [
-            GoRoute(name: 'problems info',path: 'info',
+            GoRoute(name: AppRoutes.problemsCategory.name,
+              path: AppRoutes.problemsCategory.path,
               pageBuilder: (context, state) => CustomTransitionPage<void>(
                 key: state.pageKey,
-                child: const ProblemsInfoScreen(title: "Sprouts"),
+                child: const ProblemsCategoryScreen(title: "Sprouts"),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
               ), ),
-            GoRoute(name: 'problems detail',path: ':problemId/detail',
+            GoRoute(name: AppRoutes.problemsByCategory.name,
+              path: AppRoutes.problemsByCategory.path,
+              pageBuilder: (context, state){
+              final language=state.pathParameters['language']!;
+              return CustomTransitionPage<void>(
+                key: state.pageKey,
+                child: ProblemsInfoScreen(title: "${language.capitalize()} Problems",language:ProblemLanguage.fromValue(language)!),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+              );
+              }, ),
+            GoRoute(name: AppRoutes.problemDetail.name,
+              path: AppRoutes.problemDetail.path,
               pageBuilder: (context, state) => CustomTransitionPage<void>(
                 key: state.pageKey,
-                child: ProblemDetailscreen(problemId:state.pathParameters['problemId']!),
+                child: ProblemDetailscreen(language:ProblemLanguage.fromValue(state.pathParameters['language']!)!,problemId:state.pathParameters['problemId']!),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
               ), )
           ]
@@ -89,6 +106,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
           useMaterial3: true,
+          fontFamily:'monospace',
         ),
         routerConfig: router,
       ),
