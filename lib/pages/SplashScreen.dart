@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:code_sprout/routes.dart';
 import 'package:code_sprout/singletons/LoggerSingleton.dart';
 import 'package:flutter/material.dart';

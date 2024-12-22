@@ -3,36 +3,40 @@ part of 'ProblemArchive_bloc.dart';
 @Immutable("cannot modify ProblemArchiveState state")
 class ProblemArchiveState extends Equatable with WithHttpState {
   final Map<ProblemLanguage,Map<int,Map<String,ProblemArchive>>> problemsInfo; //{language->page,{id->problem}}
+  final Map<int,Map<String,ProblemTag>> tagsInfo; //page,{tagId->tag}
+  final Map<int,Map<String,ProblemArchive>> tagProblems;//{ pageNo -> { problemId -> problem } }
   static const pageSize=20;
-  final Map<ProblemLanguage,int> totalPages;
-  final Map<ProblemLanguage,ProblemCategory?> selectedCategory;
+  final Map<String,int> totalPages;
+  final Map<ProblemLanguage,ProblemDifficulty?> selectedDifficulty;
 
   ProblemArchiveState._({
     Map<String,HttpState>? httpStates,
     this.problemsInfo=const {},
     this.totalPages=const {},
-    this.selectedCategory=const {},
+    this.tagsInfo=const {},
+    this.tagProblems=const {},
+    this.selectedDifficulty=const {},
   }){
     this.httpStates.addAll(httpStates ?? {});
   }
 
-  ProblemArchiveState.initial() : this._(
-          httpStates: const {},
-          problemsInfo: const {},
-          totalPages: {}
-        );
+  ProblemArchiveState.initial() : this._();
 
   ProblemArchiveState copyWith({
     Map<String, HttpState>? httpStates,
     Map<ProblemLanguage,Map<int,Map<String,ProblemArchive>>>? problemsInfo,
-    Map<ProblemLanguage,int>? totalPages,
-    Map<ProblemLanguage,ProblemCategory?>? selectedCategory
+    Map<String,int>? totalPages,
+    Map<int,Map<String,ProblemTag>>? tags,
+    Map<int,Map<String,ProblemArchive>>? tagProblems,
+    Map<ProblemLanguage,ProblemDifficulty?>? selectedDifficulty
   }) {
     return ProblemArchiveState._(
       httpStates: httpStates ?? this.httpStates,
       problemsInfo: problemsInfo ?? this.problemsInfo,
       totalPages: totalPages ?? this.totalPages,
-      selectedCategory: selectedCategory ?? this.selectedCategory
+      tagsInfo: tags ?? tagsInfo,
+      tagProblems: tagProblems ?? this.tagProblems,
+      selectedDifficulty: selectedDifficulty ?? this.selectedDifficulty
     );
   }
 
@@ -60,7 +64,6 @@ class ProblemArchiveState extends Equatable with WithHttpState {
     return true;
   }
 
-
   ProblemArchive? getProblemInfoById({required ProblemLanguage language,required String problemId}){
     if(problemsInfo[language]==null) return null;
     for(final problemsPage in problemsInfo[language]!.entries){
@@ -75,9 +78,15 @@ class ProblemArchiveState extends Equatable with WithHttpState {
     return problemsInfo[language]?[pageNo]?[problemId];
   }
 
+  List<ProblemTag> getTags() {
+    return tagsInfo.values.map((tags)=>tags.values).expand((tags)=>tags).toList();
+  }
+
+  List<ProblemArchive> getTagProblems(){
+    return tagProblems.values.map((tagProblems) => tagProblems.values).expand((problems) => problems).toList();
+  }
+
   @override
-  List<Object?> get props => [httpStates, problemsInfo, totalPages,selectedCategory];
-
-
+  List<Object?> get props => [httpStates, problemsInfo, totalPages,selectedDifficulty,tagsInfo,tagProblems];
 
 }

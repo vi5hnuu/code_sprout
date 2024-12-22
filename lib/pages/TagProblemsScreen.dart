@@ -15,26 +15,25 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ProblemsInfoScreen extends StatefulWidget {
+class TagProblemsScreen extends StatefulWidget {
   final String title;
-  final ProblemLanguage language;
+  final String tagId;
 
-  const ProblemsInfoScreen({super.key, required this.title,required this.language});
+  const TagProblemsScreen({super.key, required this.title,required this.tagId});
 
   @override
-  State<ProblemsInfoScreen> createState() => _ProblemsInfoScreenState();
+  State<TagProblemsScreen> createState() => _TagProblemsScreenState();
 }
 
-class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
+class _TagProblemsScreenState extends State<TagProblemsScreen> {
   late final bloc=BlocProvider.of<ProblemArchiveBloc>(context);
   final ScrollController _scrollController = ScrollController();
   CancelToken cancelToken = CancelToken();
   int pageNo = 1;
-  ProblemDifficulty? difficulty;
 
   @override
   void initState() {
-    _loadPage(pageNo: pageNo,difficulty: bloc.state.selectedDifficulty[widget.language]);
+    _loadPage(pageNo: pageNo);
     _scrollController.addListener(_loadNextPage);
     super.initState();
   }
@@ -59,8 +58,7 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
         body: BlocBuilder<ProblemArchiveBloc, ProblemArchiveState>(
           buildWhen: (previous, current) => previous != current,
           builder: (context, state) {
-            final selectedDifficulty=state.selectedDifficulty[widget.language];
-            final allPageProblems=state.getProblems(language: widget.language);
+            final tagProblems=state.getTagProblems();
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Flex(
@@ -69,49 +67,36 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                    Expanded(child: Flex(direction: Axis.vertical,children: [
-                     if(!state.isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE)) DropdownMenu(
-                         width: double.infinity,
-                         initialSelection: selectedDifficulty,
-                         onSelected: (value) {
-                           _loadPage(pageNo: 1,difficulty:value);
-                         },
-                         label: const Text("Difficulty level"),
-                         dropdownMenuEntries:[const DropdownMenuEntry(value:null,label: "All"), ...ProblemDifficulty.values
-                             .map((difficulty) => DropdownMenuEntry<ProblemDifficulty?>(value: difficulty, label: difficulty.value.capitalize()))]),
-                     if (allPageProblems.isNotEmpty) Expanded(
+                     Flexible(
                          child: ListView.builder(
+                           shrinkWrap: true,
                            padding: const EdgeInsets.symmetric(vertical: 8),
                            controller: _scrollController,
-                           itemCount: state.getProblemCount(language:widget.language),
+                           itemCount: tagProblems.length,
                            itemBuilder: (context, index) {
-                             final problem = allPageProblems[index];
+                             final problem = tagProblems[index];
                              return Padding(
                                padding: const EdgeInsets.symmetric(vertical: 2),
                                child: ProblemListTile(
-                                 problem: problem.value,
+                                 problem: problem,
                                  onTap: () {
-                                   GoRouter.of(context).pushNamed(AppRoutes.problemDetail.name, pathParameters: {'language': widget.language.value,'problemId': problem.value.id});
+                                   GoRouter.of(context).pushNamed(AppRoutes.problemDetail.name, pathParameters: {'language': problem.language.value,'problemId': problem.id});
                                  },
                                  onPlatformTap: _openUrl,),
                              );
                            },
                          ),
-                       )
-                     else if(!state.anyState(forr: HttpStates.PROBLEMS_INFO_PAGE)) Text("No Problems found",style: TextStyle(color: Colors.grey,fontSize: 24)),
-                     Container(
-                       child: (state.isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE))
-                           ? Padding(
-                           padding: const EdgeInsets.symmetric(vertical: 20),
-                           child: SpinKitThreeBounce(
-                               color: Theme.of(context).primaryColor, size: 24))
-                           : ((state.isError(forr: HttpStates.PROBLEMS_INFO_PAGE))
-                           ? RetryAgain(
-                           onRetry: ()=> _loadPage(pageNo: pageNo,difficulty:selectedDifficulty ),
-                           error: state
-                               .getError(forr: HttpStates.PROBLEMS_INFO_PAGE)!)
-                           : null),
-                     )
-                  ],)),
+                       ),
+                     if(tagProblems.isEmpty && !state.anyState(forr: HttpStates.TAG_PROBLEMS_PAGE)) Text("No Problems found",style: TextStyle(color: Colors.grey,fontSize: 24)),
+                     if(state.isLoading(forr: HttpStates.TAG_PROBLEMS_PAGE)) Padding(
+                         padding: const EdgeInsets.symmetric(vertical: 20),
+                         child: SpinKitThreeBounce(
+                             color: Theme.of(context).primaryColor, size: 24))
+                     else if(state.isError(forr: HttpStates.TAG_PROBLEMS_PAGE)) RetryAgain(
+                         onRetry: ()=> _loadPage(pageNo: pageNo),
+                         error: state
+                             .getError(forr: HttpStates.TAG_PROBLEMS_PAGE)!)
+                   ],)),
                   const BannerAdd(),
                 ],
               ),
@@ -129,8 +114,8 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
     }
   }
 
-  void _loadPage({required int pageNo,required ProblemDifficulty? difficulty}) {
-    BlocProvider.of<ProblemArchiveBloc>(context).add(FetchProblemInfoPage(pageNo: pageNo,language:widget.language,difficulty:difficulty, cancelToken: cancelToken));
+  void _loadPage({required int pageNo}) {
+    bloc.add(FetchTagProblemsPage(tagId: widget.tagId,pageNo: pageNo, cancelToken: cancelToken));
   }
 
   void _loadNextPage() {
@@ -140,14 +125,16 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
     double scrollPercentage = currentScrollPosition / maxScrollExtent;
     // Check if scroll percentage is greater than or equal to 80%
     if (scrollPercentage <= 0.8) return;
-    if (bloc.state.canLoadNextPage(language:widget.language,pageNo: pageNo+1)) {
-      setState(() => _loadPage(pageNo: ++pageNo,difficulty: bloc.state.selectedDifficulty[widget.language]));
+
+    final totalPages=bloc.state.totalPages[HttpStates.TAG_PROBLEMS_PAGE];
+    if (totalPages==null || totalPages>=pageNo+1) {
+      setState(() => _loadPage(pageNo: ++pageNo));
     }
   }
 
   @override
   void dispose() {
-    cancelToken.cancel("cancelling vrat katha page info fetch");
+    cancelToken.cancel("cancelling problems page info fetch");
     _scrollController.removeListener(_loadNextPage);
     _scrollController.dispose();
     super.dispose();

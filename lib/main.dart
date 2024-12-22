@@ -2,9 +2,10 @@
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/enums/ProblemCategory.dart';
 import 'package:code_sprout/models/enums/ProblemLanguage.dart';
-import 'package:code_sprout/pages/ProblemsCategoryScreen.dart';
+import 'package:code_sprout/pages/ProblemsHomeScreen.dart';
 import 'package:code_sprout/pages/ProblemsInfoScreen.dart';
 import 'package:code_sprout/pages/SplashScreen.dart';
+import 'package:code_sprout/pages/TagProblemsScreen.dart';
 import 'package:code_sprout/pages/problemDetailScreen.dart';
 import 'package:code_sprout/routes.dart';
 import 'package:code_sprout/services/problemArchive/ProblemArchiveRepository.dart';
@@ -53,16 +54,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           path: AppRoutes.problems.path,
           redirect: (context, state) {
             if(state.fullPath==AppRoutes.problems.path){
-              return AppRoutes.problems.path+'/'+AppRoutes.problemsCategory.path;
+              return AppRoutes.problems.path+'/'+AppRoutes.problemsHome.path;
             }
             return null;
           },
           routes: [
-            GoRoute(name: AppRoutes.problemsCategory.name,
-              path: AppRoutes.problemsCategory.path,
+            GoRoute(name: AppRoutes.problemsHome.name,
+              path: AppRoutes.problemsHome.path,
               pageBuilder: (context, state) => CustomTransitionPage<void>(
                 key: state.pageKey,
-                child: const ProblemsCategoryScreen(title: "Sprouts"),
+                child: const ProblemsHomeScreen(title: "Sprouts"),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
               ), ),
             GoRoute(name: AppRoutes.problemsByCategory.name,
@@ -74,7 +75,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 child: ProblemsInfoScreen(title: "${language.capitalize()} Problems",language:ProblemLanguage.fromValue(language)!),
                 transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
               );
-              }, ),
+            }),
+            GoRoute(name: AppRoutes.tagProblems.name,
+                path: AppRoutes.tagProblems.path,
+                pageBuilder: (context, state){
+                  final tagTitle=(state.extra as Map)['tagTitle']!;
+                  final tagId=state.pathParameters['tagId']!;
+                  return CustomTransitionPage<void>(
+                    key: state.pageKey,
+                    child: TagProblemsScreen(title: tagTitle,tagId:tagId),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) => FadeTransition(opacity: animation, child: child),
+                  );
+            }),
             GoRoute(name: AppRoutes.problemDetail.name,
               path: AppRoutes.problemDetail.path,
               pageBuilder: (context, state) => CustomTransitionPage<void>(
@@ -107,6 +119,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
           useMaterial3: true,
           fontFamily:'monospace',
+          iconTheme: const IconThemeData(color: Colors.white),
+          textTheme: const TextTheme(bodySmall: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white),bodyLarge: TextStyle(color: Colors.white))
         ),
         routerConfig: router,
       ),

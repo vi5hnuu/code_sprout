@@ -23,12 +23,12 @@ class ProblemListTile extends StatelessWidget {
         Positioned(
           bottom: 5,
           right: 12,
-          child: Text(problem.category.value.capitalize(),
+          child: Text(problem.difficulty.value.capitalize(),
             style: TextStyle(
                 letterSpacing: 1.1,
-                color: problem.category == ProblemCategory.EASY
+                color: problem.difficulty == ProblemDifficulty.EASY
                     ? Colors.green
-                    : (problem.category == ProblemCategory.MEDIUM
+                    : (problem.difficulty == ProblemDifficulty.MEDIUM
                     ? Colors.orangeAccent
                     : Colors.red),
                 fontWeight: FontWeight.bold)),),

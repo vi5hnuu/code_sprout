@@ -1,13 +1,13 @@
-enum ProblemCategory {
+enum ProblemDifficulty {
     EASY(value: "EASY"),
     MEDIUM(value: "MEDIUM"),
     HARD(value: "HARD");
 
     final String value;
 
-    const ProblemCategory({required this.value});
+    const ProblemDifficulty({required this.value});
 
-    static ProblemCategory? fromValue(String value){
-        return ProblemCategory.values.firstWhere((e) => e.value == value);
+    static ProblemDifficulty? fromValue(String value){
+        return ProblemDifficulty.values.firstWhere((e) => e.value == value);
     }
 }
