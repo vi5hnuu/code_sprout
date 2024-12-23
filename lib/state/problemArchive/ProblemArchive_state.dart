@@ -4,8 +4,8 @@ part of 'ProblemArchive_bloc.dart';
 class ProblemArchiveState extends Equatable with WithHttpState {
   final Map<ProblemLanguage,Map<int,Map<String,ProblemArchive>>> problemsInfo; //{language->page,{id->problem}}
   final Map<int,Map<String,ProblemTag>> tagsInfo; //page,{tagId->tag}
-  final Map<int,Map<String,ProblemArchive>> tagProblems;//{ pageNo -> { problemId -> problem } }
-  static const pageSize=20;
+  final Map<String,Map<int,Map<String,ProblemArchive>>> tagProblems;//{ tagId -> { pageNo -> { problemId -> problem } } }
+  static const pageSize=10;
   final Map<String,int> totalPages;
   final Map<ProblemLanguage,ProblemDifficulty?> selectedDifficulty;
 
@@ -27,7 +27,7 @@ class ProblemArchiveState extends Equatable with WithHttpState {
     Map<ProblemLanguage,Map<int,Map<String,ProblemArchive>>>? problemsInfo,
     Map<String,int>? totalPages,
     Map<int,Map<String,ProblemTag>>? tags,
-    Map<int,Map<String,ProblemArchive>>? tagProblems,
+    Map<String,Map<int,Map<String,ProblemArchive>>>? tagProblems,
     Map<ProblemLanguage,ProblemDifficulty?>? selectedDifficulty
   }) {
     return ProblemArchiveState._(
@@ -82,8 +82,8 @@ class ProblemArchiveState extends Equatable with WithHttpState {
     return tagsInfo.values.map((tags)=>tags.values).expand((tags)=>tags).toList();
   }
 
-  List<ProblemArchive> getTagProblems(){
-    return tagProblems.values.map((tagProblems) => tagProblems.values).expand((problems) => problems).toList();
+  List<ProblemArchive> getTagProblems({required String tagId}){
+    return (tagProblems[tagId] ?? {}).values.map((tagProblems) => tagProblems.values).expand((problems) => problems).toList();
   }
 
   @override

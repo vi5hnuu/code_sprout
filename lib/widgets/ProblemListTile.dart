@@ -3,7 +3,6 @@ import 'package:code_sprout/models/ProblemArchive.dart';
 import 'package:code_sprout/models/ProblemPlatform.dart';
 import 'package:code_sprout/models/enums/ProblemCategory.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -13,7 +12,8 @@ class ProblemListTile extends StatelessWidget {
   final ProblemArchive problem;
   final bool allowExpansion = false;
 
-  const ProblemListTile({super.key, required this.problem, this.onTap,this.onPlatformTap});
+  const ProblemListTile(
+      {super.key, required this.problem, this.onTap, this.onPlatformTap});
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +24,15 @@ class ProblemListTile extends StatelessWidget {
           bottom: 5,
           right: 12,
           child: Text(problem.difficulty.value.capitalize(),
-            style: TextStyle(
-                letterSpacing: 1.1,
-                color: problem.difficulty == ProblemDifficulty.EASY
-                    ? Colors.green
-                    : (problem.difficulty == ProblemDifficulty.MEDIUM
-                    ? Colors.orangeAccent
-                    : Colors.red),
-                fontWeight: FontWeight.bold)),),
+              style: TextStyle(
+                  letterSpacing: 1.1,
+                  color: problem.difficulty == ProblemDifficulty.EASY
+                      ? Colors.green
+                      : (problem.difficulty == ProblemDifficulty.MEDIUM
+                          ? Colors.orangeAccent
+                          : Colors.red),
+                  fontWeight: FontWeight.bold)),
+        ),
         ExpansionTile(
           dense: true,
           title: Text(problem.title,
@@ -39,7 +40,7 @@ class ProblemListTile extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   color: Colors.black)),
-          tilePadding: EdgeInsets.only(left: 8, right: 54),
+          tilePadding: const EdgeInsets.only(left: 8, right: 54),
           backgroundColor: Colors.green.withOpacity(0.1),
           collapsedBackgroundColor: Colors.green.withOpacity(0.05),
           shape: RoundedRectangleBorder(
@@ -48,11 +49,11 @@ class ProblemListTile extends StatelessWidget {
           collapsedShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5.0),
               side: const BorderSide(color: Colors.black)),
-          subtitle: Padding(
+          subtitle: problem.platforms.isEmpty ? Text("No platforms found") : Padding(
             padding: const EdgeInsets.all(8.0).copyWith(left: 0),
             child: Wrap(
               spacing: 12,
-              children: problem.platforms
+              children: [...problem.platforms
                   .map((platform) => GestureDetector(
                       onTap: onPlatformTap != null
                           ? () => onPlatformTap!(platform.redirectUrl)
@@ -61,25 +62,26 @@ class ProblemListTile extends StatelessWidget {
                         'assets/platforms/${platform.title.toLowerCase()}.svg',
                         width: 24,
                         fit: BoxFit.cover,
-                      )))
-                  .toList()
-                ..add(GestureDetector(
-                    onTap: () => _sharePlatformLinks(problem.platforms),
-                    child: const Icon(
-                      Icons.share,
-                      size: 24,
-                      color: Colors.black,
-                    ))),
+                      ))),GestureDetector(
+                  onTap: () => _sharePlatformLinks(problem.platforms),
+                  child: const Icon(
+                    Icons.share,
+                    size: 24,
+                    color: Colors.black,
+                  ))],
             ),
           ),
           controlAffinity: ListTileControlAffinity.leading,
           leading: const Icon(Icons.numbers, color: Colors.black),
-          childrenPadding: EdgeInsets.all(12).copyWith(top: 0),
+          childrenPadding: const EdgeInsets.all(12).copyWith(top: 0),
           children: [Text(problem.description ?? "")],
         ),
-        Positioned(top: 5,right: 5,child: IconButton(
-            onPressed: onTap,
-            icon: const Icon(Icons.ads_click,color: Colors.black))),
+        Positioned(
+            top: 5,
+            right: 5,
+            child: IconButton(
+                onPressed: onTap,
+                icon: const Icon(Icons.ads_click, color: Colors.black))),
       ],
     );
   }

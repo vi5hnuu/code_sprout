@@ -1,15 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class RetryAgain extends StatelessWidget {
   final Function()? onRetry;
   final String error;
 
-  const RetryAgain({
-    super.key,
-    required this.onRetry,
-    required this.error
-  });
+  const RetryAgain({super.key, required this.onRetry, required this.error});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +17,18 @@ class RetryAgain extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Icon(Icons.refresh,color: Colors.redAccent,size: 35,),
+            const Icon(
+              Icons.refresh,
+              color: Colors.redAccent,
+              size: 35,
+            ),
             const SizedBox(height: 12),
-            Text(error,style: const TextStyle(color: Colors.redAccent,fontFamily: 'monospace',fontSize: 16),softWrap: true)
+            Text(error,
+                style: const TextStyle(
+                    color: Colors.redAccent,
+                    fontFamily: 'monospace',
+                    fontSize: 16),
+                softWrap: true)
           ],
         ),
       ),

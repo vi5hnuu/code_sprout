@@ -5,7 +5,6 @@ import 'package:code_sprout/singletons/AdsSingleton.dart';
 import 'package:code_sprout/singletons/DioSingleton.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/BannerAdd.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +18,8 @@ class ProblemDetailscreen extends StatefulWidget {
   final ProblemLanguage language;
   final String problemId;
 
-  const ProblemDetailscreen({super.key,required this.language,required this.problemId});
+  const ProblemDetailscreen(
+      {super.key, required this.language, required this.problemId});
 
   @override
   State<ProblemDetailscreen> createState() => _ProblemDetailscreenState();
@@ -34,7 +34,9 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
   void initState() {
     AdsSingleton().dispatch(LoadInterstitialAd());
     problemDetail = BlocProvider.of<ProblemArchiveBloc>(context)
-        .state.getProblemInfoById(language:widget.language,problemId: widget.problemId)!;
+        .state
+        .getProblemInfoById(
+            language: widget.language, problemId: widget.problemId)!;
     _loadFileContent();
     super.initState();
   }
@@ -44,79 +46,87 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: theme.primaryColor,
-        title: Text(problemDetail.title),
-        foregroundColor: Colors.white,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Expanded(child: Stack(
-              fit: StackFit.expand,
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: code != null
-                      ? SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: HighlightView(
-                      code!,
-                      language: problemDetail.language.value.toLowerCase(),
-                      theme: activeHighlightTheme,
-                      padding: const EdgeInsets.all(24),
-                      textStyle: const TextStyle(
-                          overflow: TextOverflow.visible,
-                          fontFamily:
-                          'monospace'),
-                    ),
-                  )
-                      : Padding(padding: const EdgeInsets.all(24.0),child: SpinKitPulse(color: theme.primaryColor),),
-                ),
-                Align(
-                  alignment: const Alignment(0.98, -0.90),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Opacity(
-                      opacity: 0.7,
-                      child: Column(
-                        children: [
-                          if(code!=null) IconButton(
-                            onPressed: ()=>Clipboard.setData(ClipboardData(text: code!)),
-                            icon: const Icon(Icons.copy),
-                            style: ButtonStyle(
-                                backgroundColor:
-                                WidgetStatePropertyAll(theme.primaryColorLight),
-                                elevation: WidgetStatePropertyAll(5)),
-                          ),
-                          if(code!=null) IconButton(
-                            onPressed: ()=>Share.share(code!),
-                            icon: const Icon(Icons.share),
-                            style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(theme.primaryColorLight),
-                                elevation: WidgetStatePropertyAll(5)),
-                          ),
-                          IconButton(
-                            onPressed: _showThemeMenu,
-                            icon: const Icon(Icons.format_paint),
-                            style: ButtonStyle(
-                                backgroundColor:
-                                WidgetStatePropertyAll(theme.primaryColorLight),
-                                elevation: WidgetStatePropertyAll(5)),
+        appBar: AppBar(
+          backgroundColor: theme.primaryColor,
+          title: Text(problemDetail.title),
+          foregroundColor: Colors.white,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Expanded(
+                  child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: code != null
+                        ? SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: HighlightView(
+                              code!,
+                              language:
+                                  problemDetail.language.value.toLowerCase(),
+                              theme: activeHighlightTheme,
+                              padding: const EdgeInsets.all(24),
+                              textStyle: const TextStyle(
+                                  overflow: TextOverflow.visible,
+                                  fontFamily: 'monospace'),
+                            ),
                           )
-                        ],
+                        : Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: SpinKitPulse(color: theme.primaryColor),
+                          ),
+                  ),
+                  Align(
+                    alignment: const Alignment(0.98, -0.90),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Opacity(
+                        opacity: 0.7,
+                        child: Column(
+                          children: [
+                            if (code != null)
+                              IconButton(
+                                onPressed: () => Clipboard.setData(
+                                    ClipboardData(text: code!)),
+                                icon: const Icon(Icons.copy),
+                                style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(
+                                        theme.primaryColorLight),
+                                    elevation: const WidgetStatePropertyAll(5)),
+                              ),
+                            if (code != null)
+                              IconButton(
+                                onPressed: () => Share.share(code!),
+                                icon: const Icon(Icons.share),
+                                style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(
+                                        theme.primaryColorLight),
+                                    elevation: const WidgetStatePropertyAll(5)),
+                              ),
+                            IconButton(
+                              onPressed: _showThemeMenu,
+                              icon: const Icon(Icons.format_paint),
+                              style: ButtonStyle(
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      theme.primaryColorLight),
+                                  elevation: const WidgetStatePropertyAll(5)),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            )),
-            const BannerAdd(),
-          ],
-        ),
-      ) // This trailing comma makes auto-formatting nicer for build methods.
-    );
+                ],
+              )),
+              const BannerAdd(),
+            ],
+          ),
+        ) // This trailing comma makes auto-formatting nicer for build methods.
+        );
   }
 
   Future<void> _loadFileContent() async {
@@ -130,7 +140,7 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
       }
     } catch (e) {
       print("Error: $e");
-      throw e;
+      rethrow;
     }
   }
 
@@ -140,10 +150,10 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
 
     showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(1, 0.1, 0.5, 0.5),
-      menuPadding: EdgeInsets.all(12),
+      position: const RelativeRect.fromLTRB(1, 0.1, 0.5, 0.5),
+      menuPadding: const EdgeInsets.all(12),
       elevation: 5,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12))),
       surfaceTintColor: theme.primaryColorLight,
       constraints: BoxConstraints.tight(

@@ -1,7 +1,4 @@
 import 'package:code_sprout/constants/httpStates.dart';
-import 'package:code_sprout/extensions/string-etension.dart';
-import 'package:code_sprout/models/enums/ProblemCategory.dart';
-import 'package:code_sprout/models/enums/ProblemLanguage.dart';
 import 'package:code_sprout/routes.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
@@ -19,14 +16,15 @@ class TagProblemsScreen extends StatefulWidget {
   final String title;
   final String tagId;
 
-  const TagProblemsScreen({super.key, required this.title,required this.tagId});
+  const TagProblemsScreen(
+      {super.key, required this.title, required this.tagId});
 
   @override
   State<TagProblemsScreen> createState() => _TagProblemsScreenState();
 }
 
 class _TagProblemsScreenState extends State<TagProblemsScreen> {
-  late final bloc=BlocProvider.of<ProblemArchiveBloc>(context);
+  late final bloc = BlocProvider.of<ProblemArchiveBloc>(context);
   final ScrollController _scrollController = ScrollController();
   CancelToken cancelToken = CancelToken();
   int pageNo = 1;
@@ -58,7 +56,7 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
         body: BlocBuilder<ProblemArchiveBloc, ProblemArchiveState>(
           buildWhen: (previous, current) => previous != current,
           builder: (context, state) {
-            final tagProblems=state.getTagProblems();
+            final tagProblems = state.getTagProblems(tagId:widget.tagId);
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Flex(
@@ -66,37 +64,54 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                   Expanded(child: Flex(direction: Axis.vertical,children: [
-                     Flexible(
-                         child: ListView.builder(
-                           shrinkWrap: true,
-                           padding: const EdgeInsets.symmetric(vertical: 8),
-                           controller: _scrollController,
-                           itemCount: tagProblems.length,
-                           itemBuilder: (context, index) {
-                             final problem = tagProblems[index];
-                             return Padding(
-                               padding: const EdgeInsets.symmetric(vertical: 2),
-                               child: ProblemListTile(
-                                 problem: problem,
-                                 onTap: () {
-                                   GoRouter.of(context).pushNamed(AppRoutes.problemDetail.name, pathParameters: {'language': problem.language.value,'problemId': problem.id});
-                                 },
-                                 onPlatformTap: _openUrl,),
-                             );
-                           },
-                         ),
-                       ),
-                     if(tagProblems.isEmpty && !state.anyState(forr: HttpStates.TAG_PROBLEMS_PAGE)) Text("No Problems found",style: TextStyle(color: Colors.grey,fontSize: 24)),
-                     if(state.isLoading(forr: HttpStates.TAG_PROBLEMS_PAGE)) Padding(
-                         padding: const EdgeInsets.symmetric(vertical: 20),
-                         child: SpinKitThreeBounce(
-                             color: Theme.of(context).primaryColor, size: 24))
-                     else if(state.isError(forr: HttpStates.TAG_PROBLEMS_PAGE)) RetryAgain(
-                         onRetry: ()=> _loadPage(pageNo: pageNo),
-                         error: state
-                             .getError(forr: HttpStates.TAG_PROBLEMS_PAGE)!)
-                   ],)),
+                  Expanded(
+                      child: Flex(
+                    direction: Axis.vertical,
+                    children: [
+                      Flexible(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          controller: _scrollController,
+                          itemCount: tagProblems.length,
+                          itemBuilder: (context, index) {
+                            final problem = tagProblems[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: ProblemListTile(
+                                problem: problem,
+                                onTap: () {
+                                  GoRouter.of(context).pushNamed(
+                                      AppRoutes.problemDetail.name,
+                                      pathParameters: {
+                                        'language': problem.language.value,
+                                        'problemId': problem.id
+                                      });
+                                },
+                                onPlatformTap: _openUrl,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      if (tagProblems.isEmpty &&
+                          !state.anyState(forr: HttpStates.TAG_PROBLEMS_PAGE))
+                        const Text("No Problems found",
+                            style: TextStyle(color: Colors.grey, fontSize: 24)),
+                      if (state.isLoading(forr: HttpStates.TAG_PROBLEMS_PAGE))
+                        Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: SpinKitThreeBounce(
+                                color: Theme.of(context).primaryColor,
+                                size: 24))
+                      else if (state.isError(
+                          forr: HttpStates.TAG_PROBLEMS_PAGE))
+                        RetryAgain(
+                            onRetry: () => _loadPage(pageNo: pageNo),
+                            error: state.getError(
+                                forr: HttpStates.TAG_PROBLEMS_PAGE)!)
+                    ],
+                  )),
                   const BannerAdd(),
                 ],
               ),
@@ -115,7 +130,8 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
   }
 
   void _loadPage({required int pageNo}) {
-    bloc.add(FetchTagProblemsPage(tagId: widget.tagId,pageNo: pageNo, cancelToken: cancelToken));
+    bloc.add(FetchTagProblemsPage(
+        tagId: widget.tagId, pageNo: pageNo, cancelToken: cancelToken));
   }
 
   void _loadNextPage() {
@@ -126,8 +142,8 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
     // Check if scroll percentage is greater than or equal to 80%
     if (scrollPercentage <= 0.8) return;
 
-    final totalPages=bloc.state.totalPages[HttpStates.TAG_PROBLEMS_PAGE];
-    if (totalPages==null || totalPages>=pageNo+1) {
+    final totalPages = bloc.state.totalPages[HttpStates.TAG_PROBLEMS_PAGE];
+    if (!bloc.state.isLoading(forr: HttpStates.TAG_PROBLEMS_PAGE) && (totalPages == null || totalPages >= pageNo + 1)) {
       setState(() => _loadPage(pageNo: ++pageNo));
     }
   }
@@ -139,5 +155,4 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
     _scrollController.dispose();
     super.dispose();
   }
-
 }
