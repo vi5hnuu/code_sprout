@@ -85,6 +85,7 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
                                 onTap: () {
                                   GoRouter.of(context).pushNamed(
                                       AppRoutes.problemDetail.name,
+                                      queryParameters: {'tagId': widget.tagId,},
                                       pathParameters: {
                                         'language': problem.language.value,
                                         'problemId': problem.id

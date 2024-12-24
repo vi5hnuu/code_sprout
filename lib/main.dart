@@ -101,16 +101,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GoRoute(
                 name: AppRoutes.problemDetail.name,
                 path: AppRoutes.problemDetail.path,
-                pageBuilder: (context, state) => CustomTransitionPage<void>(
-                  key: state.pageKey,
-                  child: ProblemDetailscreen(
-                      language: ProblemLanguage.fromValue(
-                          state.pathParameters['language']!)!,
-                      problemId: state.pathParameters['problemId']!),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) =>
-                          FadeTransition(opacity: animation, child: child),
-                ),
+                pageBuilder: (context, state) {
+                  final problemId=state.pathParameters['problemId']!;
+                  final language=ProblemLanguage.fromValue(state.pathParameters['language']!)!;
+                  String? tagId= state.uri.queryParameters['tagId'];
+                  return CustomTransitionPage<void>(
+                    key: state.pageKey,
+                    child: ProblemDetailscreen(
+                        tagId: tagId,
+                        language: language,
+                        problemId: problemId,),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) =>
+                        FadeTransition(opacity: animation, child: child),
+                  );
+                },
               )
             ]),
       ]);

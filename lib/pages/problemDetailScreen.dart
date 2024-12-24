@@ -15,11 +15,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ProblemDetailscreen extends StatefulWidget {
+  final String? tagId;
   final ProblemLanguage language;
   final String problemId;
 
   const ProblemDetailscreen(
-      {super.key, required this.language, required this.problemId});
+      {super.key, this.tagId,required this.language, required this.problemId});
 
   @override
   State<ProblemDetailscreen> createState() => _ProblemDetailscreenState();
@@ -34,9 +35,7 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
   void initState() {
     AdsSingleton().dispatch(LoadInterstitialAd());
     problemDetail = BlocProvider.of<ProblemArchiveBloc>(context)
-        .state
-        .getProblemInfoById(
-            language: widget.language, problemId: widget.problemId)!;
+        .state.getProblemInfoById(tagId:widget.tagId,language: widget.language, problemId: widget.problemId)!;
     _loadFileContent();
     super.initState();
   }

@@ -64,11 +64,19 @@ class ProblemArchiveState extends Equatable with WithHttpState {
     return true;
   }
 
-  ProblemArchive? getProblemInfoById({required ProblemLanguage language,required String problemId}){
-    if(problemsInfo[language]==null) return null;
-    for(final problemsPage in problemsInfo[language]!.entries){
-      if(!problemsPage.value.containsKey(problemId)) continue;
-      return problemsPage.value[problemId];
+  ProblemArchive? getProblemInfoById({String? tagId,required ProblemLanguage language,required String problemId}){
+    if(tagId!=null){
+      if(!tagProblems.containsKey(tagId)) return null;
+      for(final tagProblemPageWise in tagProblems[tagId]!.entries){
+        if(!tagProblemPageWise.value.containsKey(problemId)) continue;
+        return tagProblemPageWise.value[problemId];
+      }
+    }else{
+      if(problemsInfo[language]==null) return null;
+      for(final problemsPage in problemsInfo[language]!.entries){
+        if(!problemsPage.value.containsKey(problemId)) continue;
+        return problemsPage.value[problemId];
+      }
     }
     return null;
   }
