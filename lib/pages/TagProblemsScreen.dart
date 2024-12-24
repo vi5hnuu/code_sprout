@@ -1,5 +1,6 @@
 import 'package:code_sprout/constants/httpStates.dart';
 import 'package:code_sprout/routes.dart';
+import 'package:code_sprout/singletons/AdsSingleton.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/BannerAdd.dart';
@@ -31,6 +32,7 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
 
   @override
   void initState() {
+    AdsSingleton().dispatch(LoadInterstitialAd());
     _loadPage(pageNo: pageNo);
     _scrollController.addListener(_loadNextPage);
     super.initState();
