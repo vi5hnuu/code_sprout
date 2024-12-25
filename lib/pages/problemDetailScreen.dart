@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_highlight/themes/github.dart';
+import 'package:flutter_highlight/themes/vs.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -27,7 +28,7 @@ class ProblemDetailscreen extends StatefulWidget {
 }
 
 class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
-  var activeHighlightTheme = githubTheme;
+  var activeHighlightTheme = vsTheme;
   late final ProblemArchive problemDetail;
   String? code;
 
@@ -71,7 +72,8 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
                               padding: const EdgeInsets.all(24),
                               textStyle: const TextStyle(
                                   overflow: TextOverflow.visible,
-                                  fontFamily: 'monospace'),
+                                  fontStyle: FontStyle.normal,
+                                  fontFamily: 'menlo'),
                             ),
                           )
                         : Padding(
