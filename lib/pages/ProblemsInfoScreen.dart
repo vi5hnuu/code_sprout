@@ -72,6 +72,7 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                             width: double.infinity,
                             initialSelection: selectedDifficulty?.value,
                             onSelected: (value) {
+                              setState(()=>pageNo=1);
                               _loadPage(pageNo: 1, difficulty:value!=null ? ProblemDifficulty.fromValue(value) : null);
                             },
                             label: const Text("Difficulty level"),
@@ -88,8 +89,7 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                           child: ListView.builder(
                             padding: const EdgeInsets.symmetric(vertical: 8),
                             controller: _scrollController,
-                            itemCount: state.getProblemCount(
-                                language: widget.language),
+                            itemCount: state.getProblemCount(language: widget.language),
                             itemBuilder: (context, index) {
                               final problem = allPageProblems[index];
                               return Padding(
@@ -153,8 +153,7 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
     }
   }
 
-  void _loadPage(
-      {required int pageNo, required ProblemDifficulty? difficulty}) {
+  void _loadPage({required int pageNo, required ProblemDifficulty? difficulty}) {
     BlocProvider.of<ProblemArchiveBloc>(context).add(FetchProblemInfoPage(pageNo: pageNo, language: widget.language, difficulty: difficulty, cancelToken: cancelToken));
   }
 

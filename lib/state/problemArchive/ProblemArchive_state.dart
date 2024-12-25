@@ -59,8 +59,8 @@ class ProblemArchiveState extends Equatable with WithHttpState {
   bool canLoadNextPage({required ProblemLanguage language,required int pageNo}) {
     assert(pageNo>=1);
 
-    if(pageNo>1 && totalPages[language]==null) throw Exception("total pages not initialized");
-    if(isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE) || hasProblemsInfoPage(language: language,pageNo: pageNo) || (pageNo>1 && pageNo>totalPages[language]!) ) return false;
+    if(pageNo>1 && totalPages[language.value]==null) throw Exception("total pages not initialized");
+    if(isLoading(forr: HttpStates.PROBLEMS_INFO_PAGE) || hasProblemsInfoPage(language: language,pageNo: pageNo) || (pageNo>1 && pageNo>totalPages[language.value]!) ) return false;
     return true;
   }
 
