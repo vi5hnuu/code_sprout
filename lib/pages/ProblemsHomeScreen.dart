@@ -89,7 +89,7 @@ class _ProblemsHomeScreenState extends State<ProblemsHomeScreen> {
               child: BlocBuilder<ProblemArchiveBloc, ProblemArchiveState>(
                 buildWhen: (previous, current) => previous != current,
                 builder: (context, state) {
-                  final imageWidth = md.size.width * 0.25;
+                  final imageWidth = md.size.width * 0.18;
                   final tags = state.getTags();
                   return Flex(
                     direction: Axis.vertical,
@@ -231,6 +231,7 @@ class TagItem extends StatelessWidget {
             fit: BoxFit.contain,
             width: imageWidth,
           ),
+          const SizedBox(width: 16,),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
