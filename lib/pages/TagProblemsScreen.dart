@@ -1,4 +1,5 @@
 import 'package:code_sprout/constants/httpStates.dart';
+import 'package:code_sprout/models/HttpState.dart';
 import 'package:code_sprout/routes.dart';
 import 'package:code_sprout/singletons/AdsSingleton.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
@@ -52,6 +53,13 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
                 letterSpacing: 2,
                 fontWeight: FontWeight.bold),
           ),
+          actions: [
+            if(bloc.state.totalPages[HttpStates.TAG_PROBLEMS_PAGE]!=null)
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Text('${pageNo}/${bloc.state.totalPages[HttpStates.TAG_PROBLEMS_PAGE]}',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24),),
+              )
+          ],
           backgroundColor: Theme.of(context).primaryColor,
           iconTheme: const IconThemeData(color: Colors.white),
         ),
