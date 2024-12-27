@@ -54,10 +54,10 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
                 fontWeight: FontWeight.bold),
           ),
           actions: [
-            if(bloc.state.totalPages[HttpStates.TAG_PROBLEMS_PAGE]!=null)
+            if(bloc.state.totalPages[widget.tagId]!=null)
               Padding(
                 padding: const EdgeInsets.only(right: 16.0),
-                child: Text('${pageNo}/${bloc.state.totalPages[HttpStates.TAG_PROBLEMS_PAGE]}',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24),),
+                child: Text('${pageNo}/${bloc.state.totalPages[widget.tagId]}',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24),),
               )
           ],
           backgroundColor: Theme.of(context).primaryColor,
@@ -153,7 +153,7 @@ class _TagProblemsScreenState extends State<TagProblemsScreen> {
     // Check if scroll percentage is greater than or equal to 80%
     if (scrollPercentage <= 0.8) return;
 
-    final totalPages = bloc.state.totalPages[HttpStates.TAG_PROBLEMS_PAGE];
+    final totalPages = bloc.state.totalPages[widget.tagId];
     if (!bloc.state.isLoading(forr: HttpStates.TAG_PROBLEMS_PAGE) && (totalPages == null || totalPages >= pageNo + 1)) {
       setState(() => _loadPage(pageNo: ++pageNo));
     }

@@ -1,6 +1,7 @@
 enum ProblemLanguage {
     CPP(value:"CPP"),
-    SQL(value:"SQL");
+    SQL(value:"SQL"),
+    JAVASCRIPT(value:"JAVASCRIPT");
 
     final String value;
 

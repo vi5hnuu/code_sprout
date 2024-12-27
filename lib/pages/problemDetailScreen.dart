@@ -46,13 +46,15 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: theme.primaryColor,
           title: Text(problemDetail.title),
           foregroundColor: Colors.white,
         ),
         body: Center(
-          child: Column(
+          child: Flex(
+            direction: Axis.vertical,
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(

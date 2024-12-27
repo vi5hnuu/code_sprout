@@ -62,7 +62,7 @@ class ProblemArchiveBloc
     });
 
     on<FetchTagProblemsPage>((event, emit) async {
-      // if (state.tagsInfo[event.pageNo] != null) return emit(state.copyWith());
+      if (state.tagProblems[event.tagId]?[event.pageNo] != null) return emit(state.copyWith());
       try {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(HttpStates.TAG_PROBLEMS_PAGE, const HttpState.loading())));
         final tagProblemsPage = await problemsArchiveRepository.getTagProblemsPage(tagId: event.tagId, pageNo: event.pageNo, pageSize: ProblemArchiveState.pageSize, cancelToken: event.cancelToken);
@@ -70,7 +70,7 @@ class ProblemArchiveBloc
         final tagProblems=state.tagProblems.clone();
         if(!tagProblems.containsKey(event.tagId)) tagProblems.put(event.tagId, {});
         tagProblems[event.tagId]!.put(event.pageNo, LinkedHashMap.fromEntries(tagProblemsPage.data!.data.map((tagProblem) => MapEntry(tagProblem.id, tagProblem))));
-        emit(state.copyWith(totalPages: state.totalPages.clone()..put(HttpStates.TAG_PROBLEMS_PAGE, tagProblemsPage.data!.totalPages), tagProblems: tagProblems, httpStates: state.httpStates.clone()..put(HttpStates.TAG_PROBLEMS_PAGE, const HttpState.done())));
+        emit(state.copyWith(totalPages: state.totalPages.clone()..put(event.tagId, tagProblemsPage.data!.totalPages), tagProblems: tagProblems, httpStates: state.httpStates.clone()..put(HttpStates.TAG_PROBLEMS_PAGE, const HttpState.done())));
       } on DioException catch (e) {
         emit(state.copyWith(httpStates: state.httpStates.clone()..put(HttpStates.TAG_PROBLEMS_PAGE, HttpState.error(error: e.toString()))));
       } catch (e) {
