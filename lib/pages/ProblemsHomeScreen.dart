@@ -40,7 +40,21 @@ class _ProblemsHomeScreenState extends State<ProblemsHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          centerTitle: true,
+          actions: [
+            GestureDetector(
+              onTap: ()=>router.pushNamed(AppRoutes.editor.name),
+              child: const Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child: Row(
+                  children: [
+                    Text("Open Editor",style: TextStyle(fontFamily: "monospace",fontWeight: FontWeight.bold,color: Colors.white)),
+                    SizedBox(width: 8,),
+                    Icon(Icons.code)
+                  ],
+                ),
+              ),
+            )
+          ],
           title: Text(
             widget.title,
             style: const TextStyle(

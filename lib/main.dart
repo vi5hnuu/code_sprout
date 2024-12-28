@@ -1,14 +1,17 @@
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/enums/ProblemLanguage.dart';
+import 'package:code_sprout/pages/CodeEditor.dart';
 import 'package:code_sprout/pages/ProblemsHomeScreen.dart';
 import 'package:code_sprout/pages/ProblemsInfoScreen.dart';
 import 'package:code_sprout/pages/SplashScreen.dart';
 import 'package:code_sprout/pages/TagProblemsScreen.dart';
 import 'package:code_sprout/pages/problemDetailScreen.dart';
 import 'package:code_sprout/routes.dart';
+import 'package:code_sprout/services/editor/CompilerRepository.dart';
 import 'package:code_sprout/services/problemArchive/ProblemArchiveRepository.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
+import 'package:code_sprout/state/compilerState/compiler_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,6 +53,25 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                 (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),
           ),
+        ),
+        GoRoute(
+          name: AppRoutes.editor.name,
+          path: AppRoutes.editor.path,
+          pageBuilder: (context, state){
+            String? language;
+            String? code;
+            if(state.extra is Map){
+              language=(state.extra as Map)['language'];
+              code=(state.extra as Map)['code'];
+            }
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              child: CodeEditor(language: language,code: code,),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) =>
+                  FadeTransition(opacity: animation, child: child),
+            );
+          },
         ),
         GoRoute(
             name: AppRoutes.problems.name,
@@ -135,7 +157,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<ProblemArchiveBloc>(
             lazy: false,
             create: (ctx) => ProblemArchiveBloc(
-                problemsArchiveRepository: ProblemArchiveRepository()))
+                problemsArchiveRepository: ProblemArchiveRepository())),
+        BlocProvider<CompilerBloc>(
+            lazy: false,
+            create: (ctx) => CompilerBloc(
+                compilerRepository: CompilerRepository()))
       ],
       child: MaterialApp.router(
         key: parentNavKey,

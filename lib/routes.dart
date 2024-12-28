@@ -7,6 +7,7 @@ class AppRoute{
 class AppRoutes{
   static AppRoute splashRoute=AppRoute(name: 'splash', path: '/splash');
   static AppRoute errorRoute=AppRoute(name: 'error', path: '/error');
+  static AppRoute editor=AppRoute(name: 'editor', path: '/editor');
   static AppRoute problems=AppRoute(name: 'problems', path: '/problems');
   static AppRoute problemsHome=AppRoute(name: 'problems home', path: 'problems/category');
   static AppRoute problemsByCategory=AppRoute(name: 'problems by language', path: 'language/:language');

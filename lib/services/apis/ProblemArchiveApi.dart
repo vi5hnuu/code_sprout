@@ -7,9 +7,9 @@ import '../../singletons/DioSingleton.dart';
 
 class ProblemArchiveApi {
   static final ProblemArchiveApi _instance = ProblemArchiveApi._();
-  static const String _problemsInfoPage = "${Constants.baseUrl}/problem/all/info"; //GET
-  static const String _problemTagsPage = "${Constants.baseUrl}/tags/info"; //GET
-  static const String _tagProblemsPage = "${Constants.baseUrl}/tag/{tagId}/problems"; //GET
+  static const String _problemsInfoPage = "${Constants.codeSproutBaseUrl}/problem/all/info"; //GET
+  static const String _problemTagsPage = "${Constants.codeSproutBaseUrl}/tags/info"; //GET
+  static const String _tagProblemsPage = "${Constants.codeSproutBaseUrl}/tag/{tagId}/problems"; //GET
 
   ProblemArchiveApi._();
   factory ProblemArchiveApi() {

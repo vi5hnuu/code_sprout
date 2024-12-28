@@ -2,6 +2,7 @@ import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
 import 'package:code_sprout/models/ProblemImage.dart';
 import 'package:code_sprout/models/enums/ProblemLanguage.dart';
+import 'package:code_sprout/routes.dart';
 import 'package:code_sprout/singletons/AdsSingleton.dart';
 import 'package:code_sprout/singletons/DioSingleton.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
@@ -18,6 +19,7 @@ import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_highlight/themes/vs.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ProblemDetailscreen extends StatefulWidget {
@@ -51,6 +53,7 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
 
   @override
   Widget build(BuildContext context) {
+    late final router=GoRouter.of(context);
     late MediaQueryData md=MediaQuery.of(context);
     final theme = Theme.of(context);
 
@@ -60,6 +63,21 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
           backgroundColor: theme.primaryColor,
           title: Text(problemDetail.title),
           foregroundColor: Colors.white,
+          actions: [
+            if(code!=null && [ProblemLanguage.CPP,ProblemLanguage.JAVASCRIPT].contains(widget.language)) GestureDetector(
+              onTap: ()=>router.pushNamed(AppRoutes.editor.name,extra: {'language':widget.language.value.toLowerCase(),"code":code}),
+              child: const Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child: Row(
+                  children: [
+                    Text("Open Editor",style: TextStyle(fontFamily: "monospace",fontWeight: FontWeight.bold,color: Colors.white)),
+                    SizedBox(width: 8,),
+                    Icon(Icons.code)
+                  ],
+                ),
+              ),
+            )
+          ],
         ),
         floatingActionButton: Column(
           mainAxisSize: MainAxisSize.min,
