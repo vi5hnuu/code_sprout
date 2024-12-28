@@ -12,6 +12,7 @@ import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 
 final parentNavKey = GlobalKey<NavigatorState>();
@@ -22,6 +23,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 

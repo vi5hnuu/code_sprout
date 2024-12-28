@@ -4,7 +4,7 @@ import 'package:code_sprout/constants/httpStates.dart';
 import 'package:code_sprout/extensions/map-entensions.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
 import 'package:code_sprout/models/ProblemTag.dart';
-import 'package:code_sprout/models/enums/ProblemCategory.dart';
+import 'package:code_sprout/models/enums/ProblemDifficulty.dart';
 import 'package:code_sprout/models/enums/ProblemLanguage.dart';
 import 'package:code_sprout/services/problemArchive/ProblemArchiveRepository.dart';
 import 'package:code_sprout/state/WithHttpState.dart';

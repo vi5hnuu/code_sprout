@@ -1,5 +1,6 @@
 import 'package:code_sprout/singletons/LoggerSingleton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class BannerAdd extends StatefulWidget {
@@ -20,7 +21,7 @@ class _BannerAddState extends State<BannerAdd> {
 
   @override
   Widget build(BuildContext context) {
-    if(_bannerAd==null ) return const SizedBox.shrink();
+    if(_bannerAd==null || dotenv.env['PRODUCTION']!=true) return const SizedBox.shrink();
     return SizedBox(height: AdSize.banner.height.toDouble(),child: AdWidget(ad: _bannerAd!));
   }
 

@@ -1,6 +1,6 @@
 import 'package:code_sprout/constants/httpStates.dart';
 import 'package:code_sprout/extensions/string-etension.dart';
-import 'package:code_sprout/models/enums/ProblemCategory.dart';
+import 'package:code_sprout/models/enums/ProblemDifficulty.dart';
 import 'package:code_sprout/models/enums/ProblemLanguage.dart';
 import 'package:code_sprout/routes.dart';
 import 'package:code_sprout/singletons/NotificationService.dart';
@@ -73,7 +73,7 @@ class _ProblemsInfoScreenState extends State<ProblemsInfoScreen> {
                             initialSelection: selectedDifficulty?.value,
                             onSelected: (value) {
                               setState(()=>pageNo=1);
-                              _loadPage(pageNo: 1, difficulty:value!=null ? ProblemDifficulty.fromValue(value) : null);
+                              _loadPage(pageNo: 1, difficulty:value!=null ? ProblemDifficulty.fromValue(value as String) : null);
                             },
                             label: const Text("Difficulty level"),
                             dropdownMenuEntries: [

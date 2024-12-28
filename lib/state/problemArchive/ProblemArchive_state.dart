@@ -5,7 +5,7 @@ class ProblemArchiveState extends Equatable with WithHttpState {
   final Map<ProblemLanguage,Map<int,Map<String,ProblemArchive>>> problemsInfo; //{language->page,{id->problem}}
   final Map<int,Map<String,ProblemTag>> tagsInfo; //page,{tagId->tag}
   final Map<String,Map<int,Map<String,ProblemArchive>>> tagProblems;//{ tagId -> { pageNo -> { problemId -> problem } } }
-  static const pageSize=10;
+  static const pageSize=20;
   final Map<String,int> totalPages;
   final Map<ProblemLanguage,ProblemDifficulty?> selectedDifficulty;
 

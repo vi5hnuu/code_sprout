@@ -1,7 +1,7 @@
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
 import 'package:code_sprout/models/ProblemPlatform.dart';
-import 'package:code_sprout/models/enums/ProblemCategory.dart';
+import 'package:code_sprout/models/enums/ProblemDifficulty.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:share_plus/share_plus.dart';

@@ -2,7 +2,7 @@ import 'package:code_sprout/models/ApiResponse.dart';
 import 'package:code_sprout/models/Pageable.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
 import 'package:code_sprout/models/ProblemTag.dart';
-import 'package:code_sprout/models/enums/ProblemCategory.dart';
+import 'package:code_sprout/models/enums/ProblemDifficulty.dart';
 import 'package:code_sprout/models/enums/ProblemLanguage.dart';
 import 'package:code_sprout/services/apis/ProblemArchiveApi.dart';
 import 'package:dio/dio.dart';

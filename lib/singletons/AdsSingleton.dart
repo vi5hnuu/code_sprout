@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:code_sprout/singletons/LoggerSingleton.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdEvent {}
@@ -18,6 +19,7 @@ class AdsSingleton {
   }
 
   _loadInterstitialAd() {
+    if(dotenv.env['PRODUCTION']!=true) return;
     InterstitialAd.load(
         adUnitId: 'ca-app-pub-4715945578201106/8253610758',
         request: const AdRequest(keywords: [

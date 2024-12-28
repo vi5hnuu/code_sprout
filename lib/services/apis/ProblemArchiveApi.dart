@@ -1,5 +1,5 @@
 import 'package:code_sprout/constants/Constants.dart';
-import 'package:code_sprout/models/enums/ProblemCategory.dart';
+import 'package:code_sprout/models/enums/ProblemDifficulty.dart';
 import 'package:code_sprout/models/enums/ProblemLanguage.dart';
 import 'package:dio/dio.dart';
 

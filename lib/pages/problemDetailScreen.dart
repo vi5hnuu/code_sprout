@@ -1,17 +1,20 @@
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/models/ProblemArchive.dart';
+import 'package:code_sprout/models/ProblemImage.dart';
 import 'package:code_sprout/models/enums/ProblemLanguage.dart';
 import 'package:code_sprout/singletons/AdsSingleton.dart';
 import 'package:code_sprout/singletons/DioSingleton.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/BannerAdd.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_highlight/themes/vs.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -30,6 +33,7 @@ class ProblemDetailscreen extends StatefulWidget {
 class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
   var activeHighlightTheme = vsTheme;
   late final ProblemArchive problemDetail;
+  ProblemImage? selectedProblemImage;
   String? code;
 
   @override
@@ -43,6 +47,7 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
 
   @override
   Widget build(BuildContext context) {
+    late MediaQueryData md=MediaQuery.of(context);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -123,8 +128,31 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
                       ),
                     ),
                   ),
+                  if(selectedProblemImage!=null)
+                    Align(alignment: Alignment.bottomCenter,child: Container(decoration: BoxDecoration(color: Colors.black38),height:md.size.height*0.25,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      DraggableInteractiveImage(title: selectedProblemImage!.title,src:selectedProblemImage!.src),
+                      Positioned(right: 10,top: 10,child: IconButton(onPressed: () => setState(()=>selectedProblemImage=null), icon: Icon(Icons.close))),
+                    ],
+                  ),),)
                 ],
               )),
+              if(problemDetail.problemImages.isNotEmpty) SizedBox(
+                height: md.size.height*0.08,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 8.0),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  children: problemDetail.problemImages.map((problemImage){
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: QuestionThumbnailImage(onTap: () => setState(() =>selectedProblemImage=problemImage),itemNo: 1,src:problemImage.src),
+                    );
+                  }).toList(),
+                ),
+              ),
               const BannerAdd(),
             ],
           ),
@@ -171,5 +199,65 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
       if (selectedTheme == null) return;
       setState(() => activeHighlightTheme = themeMap[selectedTheme]!);
     });
+  }
+}
+
+class QuestionThumbnailImage extends StatelessWidget {
+  final String src;
+  final int itemNo;
+  final VoidCallback? onTap;
+
+  const QuestionThumbnailImage({
+    required this.src,
+    required this.itemNo,
+    this.onTap,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(border: Border.all(color: Colors.grey),borderRadius: BorderRadius.circular(4)),
+            padding: const EdgeInsets.all(4),
+            child: Image.network(src,fit: BoxFit.fitHeight,
+              errorBuilder: (context, error, stackTrace) => SizedBox(height: double.infinity,child: Icon(Icons.error,color: Colors.red,),),
+              loadingBuilder: (context, child, loadingProgress) => loadingProgress==null ? child : SpinKitCircle(color: Colors.green,),),
+          ),
+          Positioned(right: 4,top: 4,child: CircleAvatar(child: Text(itemNo.toString(),style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold),),maxRadius: 10,),)
+        ],
+      ),
+    );
+  }
+}
+
+
+class DraggableInteractiveImage extends StatelessWidget {
+  final String src;
+  final String title;
+
+  const DraggableInteractiveImage({super.key,required this.src,required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        InteractiveViewer(
+        boundaryMargin: const EdgeInsets.all(50),
+        minScale: 0.5,
+        maxScale: 5.0,
+        constrained: true,
+        child: Image.network(
+          src,
+          fit: BoxFit.fitWidth,
+          errorBuilder: (context, error, stackTrace) => SizedBox(height: double.infinity,child: Icon(Icons.error,color: Colors.red,),),
+          loadingBuilder: (context, child, loadingProgress) => loadingProgress==null ? child : SpinKitCircle(color: Colors.green,),)),
+          Positioned(top: 5,left: 5,child:Container(constraints: const BoxConstraints(maxWidth: 300),padding: const EdgeInsets.symmetric(horizontal: 8),decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.circular(4)),child: Text(title,style: const TextStyle(color: Colors.white,overflow: TextOverflow.ellipsis),),))
+      ],
+    );
   }
 }
