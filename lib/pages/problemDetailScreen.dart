@@ -6,10 +6,12 @@ import 'package:code_sprout/singletons/AdsSingleton.dart';
 import 'package:code_sprout/singletons/DioSingleton.dart';
 import 'package:code_sprout/state/ProblemArchive/ProblemArchive_bloc.dart';
 import 'package:code_sprout/widgets/BannerAdd.dart';
+import 'package:code_sprout/widgets/DrawOnScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_highlight/themes/github.dart';
@@ -35,6 +37,8 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
   late final ProblemArchive problemDetail;
   ProblemImage? selectedProblemImage;
   String? code;
+  bool isDrawEnabled=false;
+  Color penColor=Colors.blue;
 
   @override
   void initState() {
@@ -56,6 +60,28 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
           backgroundColor: theme.primaryColor,
           title: Text(problemDetail.title),
           foregroundColor: Colors.white,
+        ),
+        floatingActionButton: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            if(isDrawEnabled) IconButton(
+              onPressed: () => _showColorPicker(context),
+              icon: const Icon(Icons.color_lens, size: 32),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(theme.primaryColor),
+                elevation: WidgetStateProperty.all(5),
+              ),
+            ),
+            if(isDrawEnabled) const SizedBox(height: 8),
+            IconButton(
+              onPressed: ()=>setState(()=>isDrawEnabled=!isDrawEnabled),
+              icon: const Icon(Icons.draw,size: 32),
+              style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(isDrawEnabled ? theme.primaryColor : Colors.red),
+                  elevation: const WidgetStatePropertyAll(5)),
+            )
+          ],
         ),
         body: Center(
           child: Flex(
@@ -88,6 +114,26 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
                             child: SpinKitPulse(color: theme.primaryColor),
                           ),
                   ),
+
+                  if(selectedProblemImage!=null)
+                    Align(alignment: Alignment.bottomCenter,
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.black38),
+                        height: md.size.height * 0.25,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            DraggableInteractiveImage(
+                                title: selectedProblemImage!.title,
+                                src: selectedProblemImage!.src),
+                            Positioned(right: 10,
+                                top: 10,
+                                child: IconButton(onPressed: () =>
+                                    setState(() => selectedProblemImage = null),
+                                    icon: Icon(Icons.close))),
+                          ],
+                        ),),),
+                  if(isDrawEnabled) DrawOnScreen(penColor:penColor),
                   Align(
                     alignment: const Alignment(0.98, -0.90),
                     child: Padding(
@@ -122,21 +168,12 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
                                   backgroundColor: WidgetStatePropertyAll(
                                       theme.primaryColorLight),
                                   elevation: const WidgetStatePropertyAll(5)),
-                            )
+                            ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  if(selectedProblemImage!=null)
-                    Align(alignment: Alignment.bottomCenter,child: Container(decoration: BoxDecoration(color: Colors.black38),height:md.size.height*0.25,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      DraggableInteractiveImage(title: selectedProblemImage!.title,src:selectedProblemImage!.src),
-                      Positioned(right: 10,top: 10,child: IconButton(onPressed: () => setState(()=>selectedProblemImage=null), icon: Icon(Icons.close))),
-                    ],
-                  ),),)
                 ],
               )),
               if(problemDetail.problemImages.isNotEmpty) SizedBox(
@@ -158,6 +195,32 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
           ),
         ) // This trailing comma makes auto-formatting nicer for build methods.
         );
+  }
+
+  void _showColorPicker(BuildContext context)async {
+    final Color? result= await showDialog(
+      context: context,
+      builder: (context) {
+        Color selectedColor=penColor;
+        return AlertDialog(
+          title: Text('Pick Pen Color',style: TextStyle(color: selectedColor),),
+          content: SingleChildScrollView(
+            child: BlockPicker(
+              useInShowDialog: true,
+              pickerColor: selectedColor, // Current selected color
+              onColorChanged: (color)=>setState(() => selectedColor = color),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(selectedColor),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+    if(result!=null) setState(()=>penColor=result);
   }
 
   Future<void> _loadFileContent() async {
