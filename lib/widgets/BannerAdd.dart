@@ -21,7 +21,7 @@ class _BannerAddState extends State<BannerAdd> {
 
   @override
   Widget build(BuildContext context) {
-    if(_bannerAd==null || dotenv.env['PRODUCTION']!=true) return const SizedBox.shrink();
+    if(_bannerAd==null || bool.parse(dotenv.env['PRODUCTION'] ?? "false")!=true) return const SizedBox.shrink();
     return SizedBox(height: AdSize.banner.height.toDouble(),child: AdWidget(ad: _bannerAd!));
   }
 

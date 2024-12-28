@@ -19,7 +19,7 @@ class AdsSingleton {
   }
 
   _loadInterstitialAd() {
-    if(dotenv.env['PRODUCTION']!=true) return;
+    if(bool.parse(dotenv.env['PRODUCTION'] ?? "false")!=true) return;
     InterstitialAd.load(
         adUnitId: 'ca-app-pub-4715945578201106/8253610758',
         request: const AdRequest(keywords: [
