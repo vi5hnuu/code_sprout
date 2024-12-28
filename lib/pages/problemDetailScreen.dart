@@ -133,7 +133,7 @@ class _ProblemDetailscreenState extends State<ProblemDetailscreen> {
                                     icon: Icon(Icons.close))),
                           ],
                         ),),),
-                  if(isDrawEnabled) DrawOnScreen(penColor:penColor),
+                  DrawOnScreen(allowEditing: isDrawEnabled,penColor:penColor),
                   Align(
                     alignment: const Alignment(0.98, -0.90),
                     child: Padding(

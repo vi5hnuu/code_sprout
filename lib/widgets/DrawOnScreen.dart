@@ -3,20 +3,21 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DrawOnScreen extends StatefulWidget {
   final Color penColor;
+  final bool allowEditing;
 
-  const DrawOnScreen({super.key, this.penColor = Colors.blue});
+  const DrawOnScreen({super.key, this.penColor = Colors.blue,this.allowEditing=false});
 
   @override
   _DrawOnScreenState createState() => _DrawOnScreenState();
 }
 
 class _DrawOnScreenState extends State<DrawOnScreen> {
-  List<Offset?> _points = [];
+  final List<Offset?> _points = [];
   bool isErasing=false;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return (!widget.allowEditing) ? const SizedBox.shrink(): Stack(
       fit: StackFit.expand,
       children: [
         GestureDetector(
@@ -42,7 +43,12 @@ class _DrawOnScreenState extends State<DrawOnScreen> {
             child: Container(),
           ),
         ),
-        Positioned(left: 5,top: 5,child: IconButton(onPressed: () => setState(()=>isErasing=!isErasing), icon: Icon(FontAwesomeIcons.eraser,color: Colors.white,),style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(isErasing ? Colors.green : Colors.grey)),)),
+        Positioned(left: 5,top: 5,child: Column(
+          children: [
+            IconButton(onPressed: () => setState(()=>isErasing=!isErasing), icon: Icon(FontAwesomeIcons.eraser,color: Colors.white,),style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(isErasing ? Colors.green : Colors.grey)),),
+            IconButton(onPressed: () => setState(()=>_points.clear()), icon: const Icon(Icons.cleaning_services_rounded,color: Colors.white,),style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(Colors.red)),)
+          ],
+        )),
       ],
     );
   }
