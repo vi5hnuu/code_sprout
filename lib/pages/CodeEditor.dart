@@ -3,6 +3,7 @@ import 'package:code_sprout/constants/httpStates.dart';
 import 'package:code_sprout/extensions/string-etension.dart';
 import 'package:code_sprout/state/compilerState/compiler_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/theme_map.dart';
@@ -34,13 +35,17 @@ class _CodeEditorState extends State<CodeEditor> {
   late final theme=Theme.of(context);
   var activeHighlightTheme = vsTheme;
   late final controller = CodeController(
-    text: widget.code ?? "console.log('hello devs')", // Initial code
+    text: widget.code ?? '''
+    for (let i = 1; i <= 2000; i++) {
+    console.log(i);
+}
+
+    ''', // Initial code
     language: supportedLanguages[widget.language] ?? javascript,
   );
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         actions: [Padding(
@@ -90,7 +95,7 @@ class _CodeEditorState extends State<CodeEditor> {
                       child: CodeField(
                         wrap: false,
                         minLines: 100,
-                        gutterStyle: const GutterStyle(showErrors: true,showFoldingHandles: true,showLineNumbers: true),
+                        gutterStyle: const GutterStyle(width: 64,showErrors: true,showFoldingHandles: true,showLineNumbers: true),
                         controller: controller,
                       ),
                     ),
@@ -101,13 +106,29 @@ class _CodeEditorState extends State<CodeEditor> {
                   decoration: const BoxDecoration(color: Colors.black),
                   height: MediaQuery.of(context).size.height*0.25,
                   width: double.infinity,
-                  child: SingleChildScrollView(
-                    child: Stack(
-                      children: [
-                        if(state.isLoading(forr: HttpStates.COMPILER_CODE_EXECUTION)) Positioned(top: 5,right: 5,child: const SpinKitCircle(size: 16,color: Colors.green)),
-                        RichText(text: TextSpan(children: [const TextSpan(text: "\$code-sprout >> ",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.green),),TextSpan(text: state.response?.result ?? state.response?.error ?? "",style: TextStyle(color: state.response?.error!=null ? Colors.red : Colors.white))])),
-                      ],
-                    ),
+                  child: Flex(
+                    direction: Axis.vertical,
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("\$code-sprout >>",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16,color: Colors.green),),
+                          if(state.isLoading(forr: HttpStates.COMPILER_CODE_EXECUTION)) SizedBox(height: 16,child: const SpinKitCircle(size: 16,color: Colors.green))
+                          else if(state.isDone(forr:HttpStates.COMPILER_CODE_EXECUTION)) Text(state.response!=null ? ("Execution time ${state.response?.executionTimeInSec()} sec"):"",style: TextStyle(color: Colors.red),),
+                        ],
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,child: SelectableText(state.response?.result ?? state.response?.error ?? "",style: TextStyle(color: state.response?.error!=null ? Colors.red : Colors.white))),
+                        ),
+                      ),
+                    ],
                   ),
                 )
               ],

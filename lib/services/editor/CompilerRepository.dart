@@ -14,7 +14,6 @@ class CompilerRepository implements CompilerService {
   @override
   Future<CompilerResponse> executeCode({required String language, required String code, CancelToken? cancelToken}) async {
     final res = await _editorApi.executeCode(language: language,code: code, cancelToken: cancelToken);
-    return CompilerResponse(result: res['result'],error: res['error']);
-
+    return CompilerResponse(executionTime: res['executionTime'] as int,result: res['result'],error: res['error']);
   }
 }

@@ -1,5 +1,10 @@
 class CompilerResponse {
   final String? result;
   final String? error;
-  const CompilerResponse({this.result,this.error}):assert(result!=null || error!=null);
+  final int executionTime;
+  const CompilerResponse({required this.executionTime,this.result,this.error}):assert(result!=null || error!=null);
+
+  executionTimeInSec(){
+    return executionTime/1000;
+  }
 }
